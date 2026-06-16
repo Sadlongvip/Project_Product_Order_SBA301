@@ -1,0 +1,38 @@
+.w-30 {
+    width: 30%;
+}
+
+.CarouselItem-home {
+    width: 30%;
+    height: 100%;
+}
+
+.CarouselItem-home .carousel-item img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.banner-home {
+    background-color: orange;
+    padding: 30px;
+    border-radius: 8px;
+}
+
+.banner-text {
+    color: #fff;
+    flex: 1;
+    padding-right: 20px;
+}
+
+.GalleryItem-home{
+    height: 100%;
+    
+}
+
+
+.GalleryItem-home .card-img-top {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}

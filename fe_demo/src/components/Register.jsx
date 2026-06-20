@@ -174,6 +174,22 @@ export default function Register() {
                             </Form.Control.Feedback>
                         </Form.Group>
 
+                        <Form.Group className="mb-3" controlId="formAddress">
+                            <Form.Label>Address</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter address"
+                                value={state.values.address}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                name="address"
+                                isInvalid={state.touched.address && !!state.errors.address}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {state.errors.address}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+
                         <Form.Group className="d-flex justify-content-between">
                             <Button 
                                 variant="primary" 

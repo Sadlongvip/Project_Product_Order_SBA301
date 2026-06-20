@@ -22,7 +22,7 @@ export async function getCartById(id) {
 
 export async function addToCart(itemId, accountId) {
     try {
-        const res = await api.post(`cart/${accountId}/${itemId}`);
+        const res = await api.post(`cart/${accountId}/item/${itemId}`);
         return res.status;
     } catch (error) {
         console.error(error);
@@ -32,7 +32,7 @@ export async function addToCart(itemId, accountId) {
 
 export async function updateCart(accountId, itemId, quantity) {
     try {
-        const res = await api.put(`cart/${accountId}/${itemId}?quantity=${quantity}`);
+        const res = await api.put(`cart/${accountId}/item/${itemId}?quantity=${quantity}`);
         return res.data;
     } catch (error) {
         console.error(error);
@@ -42,7 +42,7 @@ export async function updateCart(accountId, itemId, quantity) {
 
 export async function removeFromCart(accountId, itemId) {
     try {
-        const res = await api.delete(`cart/${accountId}/${itemId}`);
+        const res = await api.delete(`cart/${accountId}/item/${itemId}`);
         return res.status;
     } catch (error) {
         console.error(error);

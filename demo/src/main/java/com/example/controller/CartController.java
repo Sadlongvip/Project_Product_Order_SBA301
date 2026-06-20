@@ -29,7 +29,7 @@ public class CartController {
     }
 
     // POST /api/cart/{accountId}/item/{itemId} - Thêm sản phẩm vào giỏ hàng
-    @PostMapping("/{accountId}/{itemId}")
+    @PostMapping("/{accountId}/item/{itemId}")
     public CartItemResponse addToCart(
             @PathVariable Long accountId,
             @PathVariable Long itemId,
@@ -38,7 +38,7 @@ public class CartController {
     }
 
     // PUT /api/cart/{accountId}/item/{itemId} - Cập nhật số lượng sản phẩm
-    @PutMapping("/{accountId}/{itemId}")
+    @PutMapping("/{accountId}/item/{itemId}")
     public CartItemResponse updateCartItem(
             @PathVariable Long accountId,
             @PathVariable Long itemId,
@@ -47,7 +47,7 @@ public class CartController {
     }
 
     // DELETE /api/cart/{accountId}/item/{itemId} - Xóa sản phẩm khỏi giỏ hàng
-    @DeleteMapping("/{accountId}/{itemId}")
+    @DeleteMapping("/{accountId}/item/{itemId}")
     public void removeFromCart(
             @PathVariable Long accountId,
             @PathVariable Long itemId) {

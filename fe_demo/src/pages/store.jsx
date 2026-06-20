@@ -178,9 +178,9 @@ export default function Store() {
                                 <Card className="h-100" onClick={() => handleItemClick(item)}>
                                     <Card.Img variant="top" src={item.image} ce />
                                     <Card.Body>
-                                        <Card.Title>{item.name}</Card.Title>
+                                        <Card.Title>Name: {item.name}</Card.Title>
                                         <Card.Text className="text-success fw-bold">
-                                            {item.price} Vnd
+                                            Price: {item.price} VNĐ
                                         </Card.Text>
                                     </Card.Body>
                                 </Card>
@@ -198,9 +198,9 @@ export default function Store() {
                             <Image src={selectedItem?.image} rounded fluid />
                         </div>
                         <div>
-                            <Modal.Title>{selectedItem?.name}</Modal.Title>
-                            <Modal.Title>{selectedItem?.description}</Modal.Title>
-                            <Modal.Title>{selectedItem?.price}</Modal.Title>
+                            <Modal.Title>Name: {selectedItem?.name}</Modal.Title>
+                            <Modal.Title>Description: {selectedItem?.description}</Modal.Title>
+                            <Modal.Title>Price: {selectedItem?.price} VNĐ</Modal.Title>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

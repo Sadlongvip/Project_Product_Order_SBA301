@@ -36,12 +36,12 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemResponse createItem(@RequestBody @Valid ItemRequest request) {
+    public ItemResponse createItem(@Valid @RequestBody ItemRequest request) {
         return itemService.createItemDto(request);
     }
 
     @PutMapping("/{id}")
-    public ItemResponse updateItem(@PathVariable Long id, @RequestBody @Valid ItemRequest request) {
+    public ItemResponse updateItem(@PathVariable Long id, @Valid @RequestBody ItemRequest request) {
         return itemService.updateItemDto(id, request);
     }
 

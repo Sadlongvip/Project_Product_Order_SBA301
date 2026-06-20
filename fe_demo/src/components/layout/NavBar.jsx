@@ -18,6 +18,7 @@ export default function NavBar() {
                         <Nav.Link as={NavLink} to="/store">Store</Nav.Link>
                         <Nav.Link as={NavLink} to="/cart">Cart</Nav.Link>
                         <Nav.Link as={NavLink} to="/orders">Orders</Nav.Link>
+                        <Nav.Link as={NavLink} to="/setting">Setting</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Container>

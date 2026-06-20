@@ -50,4 +50,27 @@ public class AccountService {
                 .orElseThrow(() -> new NoSuchElementException("Account not found with id: " + id));
     }
 
+    public Account updateAccount(Long id, Account account) {
+        Account existingAccount = accountRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Account not found with id: " + id));
+
+        if (account.getUsername() != null) {
+            existingAccount.setUsername(account.getUsername());
+        }
+
+        if (account.getEmail() != null) {
+            existingAccount.setEmail(account.getEmail());
+        }
+
+        if (account.getPhoneNumber() != null) {
+            existingAccount.setPhoneNumber(account.getPhoneNumber());
+        }
+
+        if (account.getAddress() != null) {
+            existingAccount.setAddress(account.getAddress());
+        }
+
+        return accountRepository.save(existingAccount);
+    }
+
 }

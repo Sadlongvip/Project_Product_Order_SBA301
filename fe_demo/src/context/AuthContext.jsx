@@ -10,21 +10,24 @@ const initialState = {
         email: '',
         password: '',
         confirmPassword: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: ''
     },
     errors: {
         username: '',
         email: '',
         password: '',
         confirmPassword: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        address: ''
     },
     touched: {
         username: false,
         email: false,
         password: false,
         confirmPassword: false,
-        phoneNumber: false
+        phoneNumber: false,
+        address: false
     }
 };
 

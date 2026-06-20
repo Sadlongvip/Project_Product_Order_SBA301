@@ -2,7 +2,10 @@ package com.example.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,8 +29,8 @@ public class AccountController {
     @PostMapping("/register")
     public ResponseEntity<?> registerAccount(@Valid @RequestBody Account account) {
         try {
-            Account savedAccount = accountService.createAccount(account);
-            return ResponseEntity.ok("Tạo tài khoản thành công");
+            accountService.createAccount(account);
+            return ResponseEntity.ok("Tạo tài khoản thành công!");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -45,6 +48,26 @@ public class AccountController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau!");
+        }
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<?> getAccount(@PathVariable Long id) {
+        try {
+            Account account = accountService.getAccountById(id);
+            return ResponseEntity.ok(account);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/users")
+    public ResponseEntity<?> updateAccount(@RequestBody Account account) {
+        try {
+            Account updatedAccount = accountService.updateAccount(account.getId(), account);
+            return ResponseEntity.ok(updatedAccount);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

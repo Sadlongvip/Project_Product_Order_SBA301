@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Account")
@@ -35,13 +36,18 @@ public class Account {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
-    //==================== Association ====================
+    @Column(nullable = true)
+    private String address;
+
+    // ==================== Association ====================
+    @JsonIgnore
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 }

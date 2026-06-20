@@ -75,6 +75,12 @@ export const validateField = (name, value, allValues = {}) => {
         return 'Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu với 0 hoặc +84';
       }
       return '';
+    
+    case 'address':
+      if (!value || value.trim() === '') {
+        return 'Địa chỉ không được để trống';
+      }
+      return '';
 
     default:
       return '';
@@ -94,6 +100,23 @@ export const validateField = (name, value, allValues = {}) => {
 export const validateUserInput = (allValues) => {
   const errors = {};
   const fields = ['userName', 'email', 'password', 'confirmPassword', 'phoneNumber'];
+
+  fields.forEach((field) => {
+    const error = validateField(field, allValues[field], allValues);
+    if (error) {
+      errors[field] = error;
+    }
+  });
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors
+  };
+};
+
+export const validateSettingUserInput = (allValues) => {
+  const errors = {};
+  const fields = ['username', 'email', 'phoneNumber', 'address'];
 
   fields.forEach((field) => {
     const error = validateField(field, allValues[field], allValues);

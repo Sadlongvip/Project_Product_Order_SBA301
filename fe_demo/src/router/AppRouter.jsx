@@ -9,7 +9,7 @@ import Cart from '../pages/Cart';
 import Orders from '../pages/Orders';
 import HomeTest from '../pages/homepage_framework';
 import ErrorLink from '../pages/ErrorLink';
-
+import SettingsUser from '../pages/SettingUser';
 function ProtectedRoute({ element }) {
     const { isAuthenticated, state } = useAuth();
     const hasToken = localStorage.getItem('authToken');
@@ -35,6 +35,7 @@ export default function AppRouter() {
                 <Route path="/orders" element={<ProtectedRoute element={<Orders />} />} />
                 <Route path="/home_test" element={<HomeTest />} />
                 <Route path="/errorlink" element={<ErrorLink />} />
+                <Route path="/setting" element={<ProtectedRoute element={<SettingsUser />} />} />
                 <Route path="*" element={<Navigate to="/errorlink" replace />} />
             </Routes>
         </AuthProvider>

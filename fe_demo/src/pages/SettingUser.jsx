@@ -1,6 +1,6 @@
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { validateField, validateSettingUserInput } from "../validation/Validation";
-import { useUser } from "../hooks/useUser";
+import { useAccount } from "../hooks/useAccount";
 import { getUser, updateUser } from "../service/UserService";
 import { useState, useEffect } from "react";
 
@@ -13,11 +13,11 @@ export default function SettingUser() {
     });
     const [errors, setErrors] = useState({});
     const [statusMsg, setStatusMsg] = useState(null);
-    const user = useUser();
+    const account = useAccount();
 
     async function loadData() {
-        if (user && user.id) {
-            const response = await getUser(user.id);
+        if (account && account.id) {
+            const response = await getUser(account.id);
             if (response) {
                 setUserData({
                     ...response,

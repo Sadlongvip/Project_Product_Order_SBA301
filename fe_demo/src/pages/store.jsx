@@ -2,7 +2,7 @@ import { Container, Row, Col, Card, Modal, Button, Image, Alert, Spinner } from 
 import { useEffect, useState } from "react";
 import { getItem } from "../service/ItemService";
 import { addToCart } from "../service/CartService";
-import { useUser } from "../hooks/useUser";
+import { useAccount } from "../hooks/useAccount";
 
 const ListItem = [
     {
@@ -77,7 +77,7 @@ const ListItem = [
     }
 ];
 export default function Store() {
-    const user = useUser();
+    const account = useAccount();
     const [loading, setLoading] = useState(false);
     const [loadingButton, setLoadingButton] = useState(false);
     const [itemData, setItemData] = useState([]);
@@ -100,7 +100,7 @@ export default function Store() {
     );
     async function handleAddToCart() {
         setLoadingButton(true);
-        const responeStatus = await addToCart(selectedItem.id, user?.id);
+        const responeStatus = await addToCart(selectedItem.id, account?.id);
         if (responeStatus == 200) {
             setShowAlert(true);
             setMsgAlert("Đã thêm vào giỏ hàng thành công!");

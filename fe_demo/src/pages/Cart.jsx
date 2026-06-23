@@ -3,11 +3,11 @@ import {
     Container, Table, Button, Spinner, Alert, Image, Badge
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../hooks/useUser";
+import { useAccount } from "../hooks/useAccount";
 import { getCartById, updateCart, removeFromCart, clearCart } from "../service/CartService";
 
 export default function Cart() {
-    const user = useUser();
+    const account = useAccount();
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -21,13 +21,13 @@ export default function Cart() {
 
     // Load giỏ hàng
     async function loadCart() {
-        if (!user) {
+        if (!account) {
             navigate("/login");
             return;
         }
         setLoading(true);
         try {
-            const data = await getCartById(user.id);
+            const data = await getCartById(account.id);
             // Backend trả về trực tiếp List<CartItem>
             setCartItems(Array.isArray(data) ? data : []);
         } catch (error) {
@@ -43,7 +43,7 @@ export default function Cart() {
 
     // Xóa 1 sản phẩm khỏi giỏ
     async function handleRemove(itemId) {
-        const status = await removeFromCart(user.id, itemId);
+        const status = await removeFromCart(account.id, itemId);
         if (status === 200) {
             showAlert("Đã xóa sản phẩm khỏi giỏ hàng!");
             loadCart();
@@ -55,13 +55,13 @@ export default function Cart() {
     // Cập nhật số lượng
     async function handleQuantityChange(itemId, newQty) {
         if (newQty < 1) return;
-        await updateCart(user.id, itemId, newQty);
+        await updateCart(account.id, itemId, newQty);
         loadCart();
     }
 
     // Xóa toàn bộ giỏ
     async function handleClearCart() {
-        const status = await clearCart(user.id);
+        const status = await clearCart(account.id);
         if (status === 200) {
             showAlert("Đã xóa toàn bộ giỏ hàng!");
             setCartItems([]);

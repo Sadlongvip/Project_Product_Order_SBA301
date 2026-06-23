@@ -50,4 +50,8 @@ public class Account {
     @JsonIgnore
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "account")
+    private Shop shop;
 }

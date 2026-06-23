@@ -3,22 +3,22 @@ import {
     Container, Table, Spinner, Badge, Image, Accordion
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../hooks/useUser";
+import { useAccount } from "../hooks/useAccount";
 import { getOrdersByAccount } from "../service/OrderService";
 
 export default function Orders() {
-    const user = useUser();
+    const account = useAccount();
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
 
     async function loadOrders() {
-        if (!user) {
+        if (!account) {
             navigate("/login");
             return;
         }
         setLoading(true);
-        const data = await getOrdersByAccount(user.id);
+        const data = await getOrdersByAccount(account.id);
         setOrders(Array.isArray(data) ? data : []);
         setLoading(false);
     }

@@ -8,14 +8,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.dto.LoginResponse;
 import com.example.model.Account;
-import com.example.repository.AccountRepository;
+import com.example.repository.IAccountRepository;
 
 @Service
 public class AccountService {
-    private final AccountRepository accountRepository;
+    private final IAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AccountService(IAccountRepository accountRepository, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
     }

@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 import com.example.dto.OrderItemResponse;
 import com.example.dto.OrderResponse;
 import com.example.model.Order;
-import com.example.repository.OrderRepository;
+import com.example.repository.IOrderRepository;
 
 @Service
 public class OrderService {
 
-    private final OrderRepository orderRepository;
+    private final IOrderRepository orderRepository;
 
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(IOrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

@@ -15,21 +15,21 @@ import com.example.model.Account;
 import com.example.model.Cart;
 import com.example.model.CartItem;
 import com.example.model.Item;
-import com.example.repository.CartItemRepository;
-import com.example.repository.CartRepository;
-import com.example.repository.ItemRepository;
+import com.example.repository.ICartItemRepository;
+import com.example.repository.ICartRepository;
+import com.example.repository.IItemRepository;
 
 @Service
 public class CartService {
 
     @Autowired
-    private CartRepository cartRepository;
+    private ICartRepository cartRepository;
 
     @Autowired
-    private CartItemRepository cartItemRepository;
+    private ICartItemRepository cartItemRepository;
 
     @Autowired
-    private ItemRepository itemRepository;
+    private IItemRepository itemRepository;
 
     @Autowired
     private AccountService accountService;

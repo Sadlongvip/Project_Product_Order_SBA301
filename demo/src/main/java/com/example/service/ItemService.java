@@ -10,17 +10,17 @@ import com.example.dto.ItemRequest;
 import com.example.dto.ItemResponse;
 import com.example.model.Category;
 import com.example.model.Item;
-import com.example.repository.CategoryRepository;
-import com.example.repository.ItemRepository;
+import com.example.repository.ICategoryRepository;
+import com.example.repository.IItemRepository;
 
 @Service
 public class ItemService {
 
     @Autowired
-    private ItemRepository itemRepository;
+    private IItemRepository itemRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private ICategoryRepository categoryRepository;
     // ========================DTO========================
 
     // Helper: Entity -> Response

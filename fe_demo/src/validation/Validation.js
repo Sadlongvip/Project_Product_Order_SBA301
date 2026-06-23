@@ -199,3 +199,102 @@ export function ValidateOrderInput(formData) {
   return errors
 }
 
+//-----------------------------------SHOP----------------------------
+// name, address, phone, email, logo, banner, description, status
+
+export function ValidateShopName(value) {
+  if (!value || value.trim() === '') {
+    return 'Tên shop không được để trống';
+  }
+  if (value.trim().length < 3) {
+    return 'Tên shop phải có ít nhất 3 ký tự';
+  }
+  if (value.trim().length > 100) {
+    return 'Tên shop không được vượt quá 100 ký tự';
+  }
+  return '';
+}
+
+export function ValidateShopAddress(value) {
+  if (!value || value.trim() === '') {
+    return 'Địa chỉ không được để trống';
+  }
+  if (value.trim().length < 5) {
+    return 'Địa chỉ phải có ít nhất 5 ký tự';
+  }
+  if (value.trim().length > 200) {
+    return 'Địa chỉ không được vượt quá 200 ký tự';
+  }
+  return '';
+}
+
+export function ValidateShopPhone(value) {
+  if (!value || value.trim() === '') {
+    return 'Số điện thoại không được để trống';
+  }
+  const phoneRegex = /^(0|\+84)[0-9]{9}$/;
+  if (!phoneRegex.test(value.replace(/\s/g, ''))) {
+    return 'Số điện thoại không hợp lệ. Vui lòng nhập 10 chữ số bắt đầu với 0 hoặc +84';
+  }
+  return '';
+}
+
+export function ValidateShopEmail(value) {
+  if (!value || value.trim() === '') {
+    return 'Email không được để trống';
+  }
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(value.trim())) {
+    return 'Email không hợp lệ';
+  }
+  return '';
+}
+
+export function ValidateShopLogo(value) {
+  if (!value || value.trim() === '') {
+    return 'Logo không được để trống';
+  }
+  return '';
+}
+
+export function ValidateShopBanner(value) {
+  if (!value || value.trim() === '') {
+    return 'Banner không được để trống';
+  }
+  return '';
+}
+
+export function ValidateShopDescription(value) {
+  if (!value || value.trim() === '') {
+    return 'Mô tả không được để trống';
+  }
+  if (value.trim().length < 10) {
+    return 'Mô tả phải có ít nhất 10 ký tự';
+  }
+  if (value.trim().length > 500) {
+    return 'Mô tả không được vượt quá 500 ký tự';
+  }
+  return '';
+}
+
+export function ValidateShopStatus(value) {
+  const allowedStatuses = ['active', 'inactive', 'pending'];
+  if (!value || value.trim() === '') {
+    return 'Trạng thái không được để trống';
+  }
+  if (!allowedStatuses.includes(value.trim().toLowerCase())) {
+    return 'Trạng thái không hợp lệ (active, inactive, pending)';
+  }
+  return '';
+}
+
+export function ValidateShopInput(formData) {
+  const errors = {};
+  errors.name        = ValidateShopName(formData.name);
+  errors.address     = ValidateShopAddress(formData.address);
+  errors.phone       = ValidateShopPhone(formData.phone);
+  errors.email       = ValidateShopEmail(formData.email);
+  errors.description = ValidateShopDescription(formData.description);
+  errors.status      = ValidateShopStatus(formData.status);
+  return errors;
+}

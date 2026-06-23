@@ -69,7 +69,7 @@ export function reduceForm(state, action) {
             const newTouched2 = { ...state.touched };
 
             Object.keys(state.values).forEach(field => {
-                currentErrors[field] = ValidateOrderInput(field, state.values[field], state.values);
+                currentErrors[field] = validateField(field, state.values[field], state.values);
                 newTouched2[field] = true;
             });
 
@@ -116,16 +116,12 @@ export function reduceOrderForm(state, action) {
         case 'OnChange':
             const { field, value } = action.payload;
             const newValues = { ...state.values, [field]: value };
-            const newErrors = { ...state.errors }
+            const newErrors = { ...state.errors };
 
             if (state.touched[field]) {
-                newErrors[field] = ValidateOrderInput(field, value, newValues);
+                const allErrors = ValidateOrderInput(newValues);
+                newErrors[field] = allErrors[field];
             }
-
-            if (field === 'password' && state.touched['confirmPassword']) {
-                newErrors['confirmPassword'] = ValidateOrderInput('confirmPassword', state.values.confirmPassword, newValues);
-            }
-
 
             return {
                 ...state,
@@ -145,17 +141,16 @@ export function reduceOrderForm(state, action) {
                 errors: errors
             };
         case 'VALIDATE_FORM':
-            const currentErrors = { ...state.errors };
+            const allErrors = ValidateOrderInput(state.values);
             const newTouched2 = { ...state.touched };
 
             Object.keys(state.values).forEach(field => {
-                currentErrors[field] = ValidateOrderInput(field, state.values[field], state.values);
                 newTouched2[field] = true;
             });
 
             return {
                 ...state,
-                errors: currentErrors,
+                errors: allErrors,
                 touched: newTouched2
             };
         case 'SET_AUTHENTICATED':
@@ -179,6 +174,14 @@ export function reduceShop(state, action) {
                     [field]: value
                 }
             };
+        case 'SET_SHOP':
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    ...action.payload
+                }
+            };
         case 'TOUCHED_FIELD':
             const { field: touchField, value: touchValue } = action.payload;
             return {
@@ -188,20 +191,7 @@ export function reduceShop(state, action) {
                     [touchField]: true
                 }
             };
-        case 'VALIDATE_FORM':
-            const currentErrors = { ...state.errors };
-            const newTouched2 = { ...state.touched };
 
-            Object.keys(state.values).forEach(field => {
-                currentErrors[field] = ValidateOrderInput(field.data);
-                newTouched2[field] = true;
-            });
-
-            return {
-                ...state,
-                errors: currentErrors,
-                touched: newTouched2
-            };
         // Validate + set touched tất cả field
         case 'SUBMIT': {
             const errors = ValidateShopInput(state.data);

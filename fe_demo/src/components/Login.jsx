@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Card, Container, Form, Button, Row, Col, FloatingLabel, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axiosInstance";
 
 export default function Login() {
     const { state, dispatch } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
     const [loginError, setLoginError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -47,9 +49,9 @@ export default function Login() {
 
             // Lưu toàn bộ LoginRespone vào localStorage
             localStorage.setItem('authToken', 'authenticated');
-            localStorage.setItem('user', JSON.stringify(loginData));
+            localStorage.setItem('account', JSON.stringify(loginData));
 
-            navigate("/");
+            navigate(from, { replace: true });
             } catch (error) {
             console.error("Login error:", error);
 

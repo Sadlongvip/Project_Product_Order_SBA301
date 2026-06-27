@@ -23,10 +23,11 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String name;
 
     //==================== Association ====================
+    @com.fasterxml.jackson.annotation.JsonIgnoreProperties("category")
     @OneToMany(mappedBy = "category")
     private List<Item> items;
 }

@@ -11,6 +11,16 @@
     overflow: hidden;
 }
 
+.banner-home{
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border-radius: 16px;
+    padding: 60px 40px;
+    margin-top: 30px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
 .hero-banner::before {
     content: '';
     position: absolute;

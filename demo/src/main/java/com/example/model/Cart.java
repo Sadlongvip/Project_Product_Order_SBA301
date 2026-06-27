@@ -27,7 +27,7 @@ public class Cart {
 
     //==================== Association ====================
     @OneToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "account_id", nullable = true, unique = true)
     private Account account;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)

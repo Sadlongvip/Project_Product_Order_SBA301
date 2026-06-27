@@ -1,9 +1,12 @@
-import { Container } from "react-bootstrap"
+import { Container, Form } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import GalleryItem from "../components/GalleryItem";
 import { getItem } from "../service/ItemService"
 import { useEffect, useState } from "react";
 import CarouselItem from "../components/CarouselItem";
+import { getCategory } from "../service/CategoryService";
 import "../css/global.css";
+import "../css/home.css";
 import img1 from "../assets/image.png";
 import img2 from "../assets/image_2.png";
 import img3 from "../assets/image_3.png";
@@ -40,22 +43,39 @@ const ListItem = [
 ];
 
 export default function Home() {
+    const [categories, setCategories] = useState([]);
     const [itemData, setItemData] = useState([]);
+    const [itemFilter, setItemFilter] = useState([]);
     useEffect(() => {
         loadData();
     }, []);
 
     async function loadData() {
+        let items = ListItem;
         try {
             const response = await getItem();
             console.log("API response:", response);
-            setItemData(Array.isArray(response) ? response : []);
+            if (Array.isArray(response) && response.length > 0) {
+                items = response;
+            }
         } catch (error) {
             console.log(error);
         }
-        setItemData(ListItem);
-    }
+        setItemData(items);
+        setItemFilter(items);
 
+        try {
+            const responseCate = await getCategory();
+            console.log("API response:", responseCate);
+            setCategories(Array.isArray(responseCate) ? responseCate : []);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleChangeCategory = (e) => {
+        const category = e.target.value;
+        setItemFilter(category ? itemData.filter((item) => item.categoryId == category) : itemData);
+    }
 
     return (
         <div>
@@ -67,6 +87,11 @@ export default function Home() {
                     <div className="banner-text">
                         <h2>Discover Our Collection</h2>
                         <p>Find the best products at the best prices</p>
+                        <div className="mt-4">
+                            <Link to="/store" className="hv2-btn-primary" style={{ display: 'inline-block', padding: '12px 28px', background: 'linear-gradient(135deg, #e94560, #c23152)', color: '#fff', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', boxShadow: '0 4px 15px rgba(233, 69, 96, 0.4)' }}>
+                                🛍️ Đi đến cửa hàng
+                            </Link>
+                        </div>
                     </div>
                     <CarouselItem ListItem={itemData} className="border CarouselItem-home" />
                 </div>
@@ -74,7 +99,16 @@ export default function Home() {
                     <h2 style={{ color: "#1a1a2e" }}>
                         Danh sách sản phẩm
                     </h2>
-                    <GalleryItem ListItem={itemData} className={"GalleryItem-home"} />
+                    <Form.Label htmlFor="category">Danh mục sản phẩm</Form.Label>
+                    <Form.Select aria-label="Default select example" onChange={handleChangeCategory}>
+                        <option value="">Tất cả</option>
+                        {categories?.map((category) => (
+                            <option key={category.id} value={category.id}>
+                                {category.name}
+                            </option>
+                        ))}
+                    </Form.Select>
+                    <GalleryItem ListItem={itemFilter} className={"GalleryItem-home"} />
                 </div>
             </Container>
 

@@ -298,3 +298,76 @@ export function ValidateShopInput(formData) {
   errors.status      = ValidateShopStatus(formData.status);
   return errors;
 }
+
+
+//name, description, price, image(option), stock, category, shop(it auto fill, don't need)
+
+export function ValidateItemName(value) {
+  if (!value || value.trim() === '') {
+    return 'Tên sản phẩm không được để trống';
+  }
+  if (value.trim().length < 3) {
+    return 'Tên sản phẩm phải có ít nhất 3 ký tự';
+  }
+  if (value.trim().length > 100) {
+    return 'Tên sản phẩm không được vượt quá 100 ký tự';
+  }
+  return '';
+}
+
+export function ValidateItemDescription(value) {
+  if (!value || value.trim() === '') {
+    return 'Mô tả sản phẩm không được để trống';
+  }
+  if (value.trim().length < 10) {
+    return 'Mô tả sản phẩm phải có ít nhất 10 ký tự';
+  }
+  if (value.trim().length > 500) {
+    return 'Mô tả sản phẩm không được vượt quá 500 ký tự';
+  }
+  return '';
+}
+
+export function ValidateItemPrice(value) {
+  if (!value || String(value).trim() === '') {
+    return 'Giá sản phẩm không được để trống';
+  }
+  if (value <= 0) {
+    return 'Giá sản phẩm phải lớn hơn 0';
+  }
+  return '';
+}
+
+export function ValidateItemStock(value) {
+  if (!value || String(value).trim() === '') {
+    return 'Số lượng tồn kho không được để trống';
+  }
+  if (value <= 0) {
+    return 'Số lượng tồn kho phải lớn hơn 0';
+  }
+  return '';
+}
+
+export function ValidateItemCategory(value, categoryList = []) {
+  if (!value || String(value).trim() === '') {
+    return 'Danh mục sản phẩm không được để trống';
+  }
+  if (categoryList && categoryList.length > 0) {
+    const categoryIds = categoryList.map(category => String(category.id));
+    if(!categoryIds.includes(String(value))) {
+      return 'Danh mục sản phẩm không hợp lệ';
+    }
+  }
+  return '';
+}
+
+export function ValidateItemInput(formData, categoryList = []) {
+  const errors = {};
+  errors.name        = ValidateItemName(formData.name);
+  errors.description = ValidateItemDescription(formData.description);
+  errors.price       = ValidateItemPrice(formData.price);
+  errors.stock       = ValidateItemStock(formData.stock);
+  errors.categoryId  = ValidateItemCategory(formData.categoryId, categoryList);
+  errors.image       = ValidateImage(formData.image);
+  return errors;
+}

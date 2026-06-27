@@ -192,7 +192,7 @@ export function reduceShop(state, action) {
                 }
             };
 
-        // Validate + set touched tất cả field
+        // Validate + set touched tất cả field 
         case 'SUBMIT': {
             const errors = ValidateShopInput(state.data);
             const touched = {};
@@ -204,6 +204,21 @@ export function reduceShop(state, action) {
                 ...state,
                 errors,
                 touched
+            };
+        }
+
+        case 'CANCEL': {
+            return {
+                ...state,
+                data: {
+                    name: '',
+                    description: '',
+                    image: '',
+                    address: '',
+                    phoneNumber: '',
+                },
+                errors: {},
+                touched: {}
             };
         }
 

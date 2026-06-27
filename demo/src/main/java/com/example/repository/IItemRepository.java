@@ -8,4 +8,5 @@ import com.example.model.Item;
 @Repository
 public interface IItemRepository extends JpaRepository<Item, Long> {
 
+    java.util.List<Item> findByShopId(Long shopId);
 }

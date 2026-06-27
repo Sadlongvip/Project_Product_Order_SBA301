@@ -24,7 +24,7 @@ export default function GalleryItem({ ListItem = [], className }) {
             {ListItem.map((item) => (
                 <Col className="p-2" xs={6} md={4} lg={3} key={item.id}>
                 <Card className="h-100" onClick={() => handleItemClick(item)}>
-                    <Card.Img variant="top" src={item.image} ce />
+                    <Card.Img variant="top" src={item.image} />
                     <Card.Body>
                         <Card.Title>{item.name}</Card.Title>
                         <Card.Text className="text-success fw-bold">

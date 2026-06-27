@@ -8,7 +8,6 @@ export default function Login() {
     const { state, dispatch } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
     const [loginError, setLoginError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -35,8 +34,6 @@ export default function Login() {
 
         try {
             
-            dispatch({ type: 'VALIDATE_FORM' });
-
             const response = await api.post("/auth/login", {
                 email: state.values.email,
                 password: state.values.password
@@ -51,7 +48,7 @@ export default function Login() {
             localStorage.setItem('authToken', 'authenticated');
             localStorage.setItem('account', JSON.stringify(loginData));
 
-            navigate(from, { replace: true });
+            window.location.href = "/";
             } catch (error) {
             console.error("Login error:", error);
 
@@ -63,8 +60,7 @@ export default function Login() {
                 errorMessage = "Network error. Server endpoint not found.";
             } else {
                 // Other errors
-                errorMessage = error.response?.data?.message 
-                    || (typeof error.response?.data === 'string' ? error.response.data : "Login failed. Please try again.");
+                errorMessage = "Username hoặc password của bạn không đúng";
             }
             setLoginError(errorMessage); // Nơi trả về lỗi cho dòng 80
             } finally {
@@ -84,7 +80,6 @@ export default function Login() {
                                 <Form.Group className="mb-3">
                                     <FloatingLabel controlId="email" label="Email">
                                         <Form.Control
-                                            required
                                             type="text"
                                             name="email"
                                             className="input-style"
@@ -92,18 +87,13 @@ export default function Login() {
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             placeholder="Enter your email"
-                                            isInvalid={state.touched.email && !!state.errors.email}
                                         />
-                                        <Form.Control.Feedback type="invalid">
-                                            {state.errors.email}
-                                        </Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
 
                                 <Form.Group className="mb-3">
                                     <FloatingLabel controlId="password" label="Password">
                                         <Form.Control
-                                            required
                                             type="password"
                                             name="password"
                                             className="input-style"
@@ -111,11 +101,7 @@ export default function Login() {
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                             placeholder="Enter your password"
-                                            isInvalid={state.touched.password && !!state.errors.password}
                                         />
-                                        <Form.Control.Feedback type="invalid">
-                                            {state.errors.password}
-                                        </Form.Control.Feedback>
                                     </FloatingLabel>
                                 </Form.Group>
 

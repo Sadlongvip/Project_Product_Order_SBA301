@@ -54,3 +54,15 @@ export async function deleteShop(id) {
         return null;
     }
 }
+
+// get shop by account id
+export async function getShopByAccountId(accountId) {
+    try {
+        const res = await api.get(`shop/account/${accountId}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+

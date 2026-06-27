@@ -25,16 +25,16 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(MAX)")
     private String description;
 
     @Column(nullable = false, columnDefinition = "DECIMAL(10,2) DEFAULT 0.00")
     private double price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String image;
 
     @Column(nullable = false, columnDefinition = "INT DEFAULT 0")
@@ -50,4 +50,8 @@ public class Item {
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
+
+    @ManyToOne
+    @JoinColumn(name = "shop_id", nullable = true)
+    private Shop shop;
 }

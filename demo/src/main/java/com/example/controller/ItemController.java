@@ -35,6 +35,11 @@ public class ItemController {
         return itemService.getItemByIdDto(id);
     }
 
+    @GetMapping("/shop/{shopId}")
+    public List<ItemResponse> getItemsByShopId(@PathVariable Long shopId) {
+        return itemService.getItemsByShopIdDto(shopId);
+    }
+
     @PostMapping
     public ItemResponse createItem(@Valid @RequestBody ItemRequest request) {
         return itemService.createItemDto(request);

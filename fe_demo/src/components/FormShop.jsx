@@ -1,10 +1,10 @@
 import { Form, Row, Col, Button, Image } from "react-bootstrap";
-import { useShopContext } from "../context/ShopContext";
+import { useShop } from "../context/ShopContext";
 import { ValidateShopInput } from "../validation/Validation";
 import { createShop } from "../service/ShopService";
 
 export default function FormShop({ onCancel, onSuccess }) {
-    const { state, dispatch } = useShopContext();
+    const { state, dispatch } = useShop();
     const { data, errors, touched } = state;
 
     function handleChange(e) {
@@ -17,28 +17,10 @@ export default function FormShop({ onCancel, onSuccess }) {
         dispatch({ type: "TOUCHED_FIELD", payload: { field: name, value } });
     }
 
-    async function handleSubmit(e) {
-        e.preventDefault();
-
-        // Validate toàn bộ form
-        dispatch({ type: "SUBMIT_ADD" });
-
-        const validationErrors = ValidateShopInput(data);
-        const hasError = Object.values(validationErrors).some((err) => err !== "");
-        if (hasError) return;
-
-        // Gọi API
-        try {
-            await createShop(data);
-            dispatch({ type: "SUBMIT_SUCCESS" });
-            if (onSuccess) onSuccess();
-        } catch (error) {
-            dispatch({ type: "SUBMIT_ERROR", payload: error.message });
-        }
-    }
+    
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={onSuccess}>
             {/* Lỗi server */}
             {errors.server && (
                 <div className="alert alert-danger">{errors.server}</div>
@@ -46,7 +28,7 @@ export default function FormShop({ onCancel, onSuccess }) {
 
             {/* Tên shop */}
             <Form.Group className="mb-3" controlId="shopName">
-                <Form.Label>Tên shop</Form.Label>
+                <Form.Label>Tên shop <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                     type="text"
                     name="name"
@@ -63,7 +45,7 @@ export default function FormShop({ onCancel, onSuccess }) {
 
             {/* Địa chỉ */}
             <Form.Group className="mb-3" controlId="shopAddress">
-                <Form.Label>Địa chỉ</Form.Label>
+                <Form.Label>Địa chỉ <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                     type="text"
                     name="address"
@@ -81,7 +63,7 @@ export default function FormShop({ onCancel, onSuccess }) {
             {/* Số điện thoại & Email */}
             <Row className="mb-3">
                 <Form.Group as={Col} controlId="shopPhone">
-                    <Form.Label>Số điện thoại</Form.Label>
+                    <Form.Label>Số điện thoại <span className="text-danger">*</span></Form.Label>
                     <Form.Control
                         type="text"
                         name="phone"
@@ -97,7 +79,7 @@ export default function FormShop({ onCancel, onSuccess }) {
                 </Form.Group>
 
                 <Form.Group as={Col} controlId="shopEmail">
-                    <Form.Label>Email</Form.Label>
+                    <Form.Label>Email <span className="text-danger">*</span></Form.Label>
                     <Form.Control
                         type="email"
                         name="email"
@@ -115,7 +97,7 @@ export default function FormShop({ onCancel, onSuccess }) {
 
             {/* Mô tả */}
             <Form.Group className="mb-3" controlId="shopDescription">
-                <Form.Label>Mô tả</Form.Label>
+                <Form.Label>Mô tả <span className="text-danger">*</span></Form.Label>
                 <Form.Control
                     as="textarea"
                     name="description"
@@ -133,7 +115,7 @@ export default function FormShop({ onCancel, onSuccess }) {
 
             {/* Trạng thái */}
             <Form.Group className="mb-3" controlId="shopStatus">
-                <Form.Label>Trạng thái</Form.Label>
+                <Form.Label>Trạng thái <span className="text-danger">*</span></Form.Label>
                 <Form.Select
                     name="status"
                     value={data.status}

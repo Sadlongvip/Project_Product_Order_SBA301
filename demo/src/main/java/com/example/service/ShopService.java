@@ -4,14 +4,21 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.example.model.Account;
 import com.example.model.Shop;
+import com.example.repository.IAccountRepository;
 import com.example.repository.IShopRepository;
 
 @Service
+@Transactional
 public class ShopService {
     @Autowired
     private IShopRepository shopRepository;
+
+    @Autowired
+    private IAccountRepository accountRepository;
 
     public List<Shop> getAllShops() {
         return shopRepository.findAll();
@@ -26,6 +33,10 @@ public class ShopService {
     }
 
     public Shop createShop(Shop shop) {
+        if (shop.getAccount() != null && shop.getAccount().getId() != null) {
+            Account account = accountRepository.findById(shop.getAccount().getId()).orElse(null);
+            shop.setAccount(account);
+        }
         return shopRepository.save(shop);
     }
 

@@ -1,6 +1,8 @@
-import { createContext, useContext, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import { reduceShop } from "../reduce/Reduced";
-
+import { getItemByShopId } from "../service/ItemService";
+import { getShopByAccountId } from "../service/ShopService";
+import { useAccount } from "../hooks/useAccount";
 /*
     private Long id;
     private String name;
@@ -21,7 +23,8 @@ const initState = {
         logo: "",
         banner: "",
         description: "",
-        status: ""
+        status: "",
+        accountId: ""
     },
     errors: {
         name: "",
@@ -49,11 +52,41 @@ const ShopContext = createContext(null);
 
 export function ShopProvider({ children }) {
     const [state, dispatch] = useReducer(reduceShop, initState)
+    const [listItem, setListItem] = useState([]);
+    const account = useAccount();
 
-    return <ShopContext.Provider value={{ state, dispatch }}>{children}</ShopContext.Provider>
+   async function fetchData () {
+            if (account?.id) {
+                try {
+                    const dataShop = await getShopByAccountId(account.id);
+                    if (dataShop && dataShop.id) {
+                        dispatch({ type: "SET_SHOP", payload: dataShop });
+                        
+                        try {
+                            const dataItem = await getItemByShopId(dataShop.id);
+                            setListItem(dataItem);
+                        } catch (error) {
+                            console.error("Error fetching items:", error);
+                            setListItem([]);
+                        }
+                    } else {
+                        dispatch({ type: "SET_SHOP", payload: initState.data });
+                        setListItem([]);
+                    }
+                } catch (error) {
+                    console.error("Error fetching shop:", error);
+                }
+            }
+        };
+
+    useEffect(() => {
+        fetchData();
+    }, [account?.id]);
+
+    return <ShopContext.Provider value={{ state, dispatch, listItem, fetchData }}>{children}</ShopContext.Provider>
 }
 
-export function useShopContext(){
+export function useShop(){
     const ctx = useContext(ShopContext);
     if(!ctx){
         throw new Error("ShopContext must be used within ShopProvider")

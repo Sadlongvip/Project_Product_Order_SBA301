@@ -176,12 +176,13 @@ export default function Store() {
                         {filteredItems.map((item) => (
                             <Col className="p-2" xs={6} md={4} lg={3} key={item.id}>
                                 <Card className="h-100" onClick={() => handleItemClick(item)}>
-                                    <Card.Img variant="top" src={item.image} ce />
+                                    <Card.Img variant="top" src={item.image} />
                                     <Card.Body>
-                                        <Card.Title>Name: {item.name}</Card.Title>
-                                        <Card.Text className="text-success fw-bold">
+                                        <Card.Title className="text-center">{item.name}</Card.Title>
+                                        <Card.Text className="text-success fw-bold text-center" >
                                             Price: {item.price} VNĐ
                                         </Card.Text>
+
                                     </Card.Body>
                                 </Card>
                             </Col>
@@ -198,9 +199,9 @@ export default function Store() {
                             <Image src={selectedItem?.image} rounded fluid />
                         </div>
                         <div>
-                            <Modal.Title>Name: {selectedItem?.name}</Modal.Title>
-                            <Modal.Title>Description: {selectedItem?.description}</Modal.Title>
-                            <Modal.Title>Price: {selectedItem?.price} VNĐ</Modal.Title>
+                            <p><span className="fw-bold">Name: </span>{selectedItem?.name}</p>
+                            <p><span className="fw-bold">Description: </span>{selectedItem?.description}</p>
+                            <p><span className="fw-bold text-success">Price: </span>{selectedItem?.price} VNĐ</p>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>

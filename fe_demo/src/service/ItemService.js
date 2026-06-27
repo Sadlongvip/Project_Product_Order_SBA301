@@ -10,6 +10,16 @@ export async function getItem(){
     }
 }
 
+export async function getItemByShopId(shopId){
+    try {
+        const res = await api.get(`item/shop/${shopId}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
 export async function getItemById(id){
     try {
         const res = await api.get(`item/${id}`);

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dto.ItemRequest;
 import com.example.dto.ItemResponse;
@@ -12,8 +13,11 @@ import com.example.model.Category;
 import com.example.model.Item;
 import com.example.repository.ICategoryRepository;
 import com.example.repository.IItemRepository;
+import com.example.repository.IShopRepository;
+import com.example.model.Shop;
 
 @Service
+@Transactional
 public class ItemService {
 
     @Autowired
@@ -21,6 +25,9 @@ public class ItemService {
 
     @Autowired
     private ICategoryRepository categoryRepository;
+    
+    @Autowired
+    private IShopRepository shopRepository;
     // ========================DTO========================
 
     // Helper: Entity -> Response
@@ -34,6 +41,10 @@ public class ItemService {
         res.setStock(item.getStock());
         res.setCategoryId(item.getCategory().getId());
         res.setCategoryName(item.getCategory().getName());
+        if (item.getShop() != null) {
+            res.setShopId(item.getShop().getId());
+            res.setShopName(item.getShop().getName());
+        }
         return res;
     }
 
@@ -48,12 +59,26 @@ public class ItemService {
         Category cat = categoryRepository.findById(req.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         item.setCategory(cat);
+        
+        if (req.getShopId() != null) {
+            Shop shop = shopRepository.findById(req.getShopId())
+                    .orElseThrow(() -> new RuntimeException("Shop not found"));
+            item.setShop(shop);
+        }
+        
         return item;
     }
 
     // GET all
     public List<ItemResponse> getAllItemDto() {
         return itemRepository.findAll().stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    // GET by shop ID
+    public List<ItemResponse> getItemsByShopIdDto(Long shopId) {
+        return itemRepository.findByShopId(shopId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
@@ -84,6 +109,13 @@ public class ItemService {
         Category cat = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         item.setCategory(cat);
+        
+        if (request.getShopId() != null) {
+            Shop shop = shopRepository.findById(request.getShopId())
+                    .orElseThrow(() -> new RuntimeException("Shop not found"));
+            item.setShop(shop);
+        }
+        
         Item updated = itemRepository.save(item);
         return toResponse(updated);
     }

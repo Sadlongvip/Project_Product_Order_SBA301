@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Account")
@@ -27,31 +27,31 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String username;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "nvarchar(255)")
     private String email;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "nvarchar(255)")
     private String phoneNumber;
 
-    @Column(nullable = true)
+    @Column(nullable = true, columnDefinition = "nvarchar(255)")
     private String address;
 
     // ==================== Association ====================
-    @JsonIgnore
+    @JsonIgnoreProperties("account")
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("account")
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 
-    @JsonIgnore
+    @JsonIgnoreProperties("account")
     @OneToOne(mappedBy = "account")
     private Shop shop;
 }

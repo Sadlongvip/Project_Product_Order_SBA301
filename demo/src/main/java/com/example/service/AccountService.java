@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dto.LoginResponse;
 import com.example.model.Account;
 import com.example.repository.IAccountRepository;
 
 @Service
+@Transactional
 public class AccountService {
     private final IAccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;

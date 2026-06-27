@@ -51,21 +51,33 @@ export default function Register() {
                 username: state.values.username,
                 email: state.values.email,
                 password: state.values.password,
-                phoneNumber: state.values.phoneNumber
+                phoneNumber: state.values.phoneNumber,
+                address: state.values.address
             });
 
             console.log("Register success:", response.data);
+
+            // Auto-login after successful registration
+            const loginResponse = await api.post("/auth/login", {
+                email: state.values.email,
+                password: state.values.password
+            });
+            
+            const loginData = loginResponse.data;
+            console.log("Auto-login success:", loginData);
+
             setShowSuccess(true);
 
             // Update auth state in context
             dispatch({ type: 'SET_AUTHENTICATED', payload: true });
 
-            // Store a dummy token for redirection to /home
+            // Store a dummy token and the account data for redirection to /home
             localStorage.setItem('authToken', 'authenticated');
+            localStorage.setItem('account', JSON.stringify(loginData));
 
-            // Redirect to home or login after successful registration
+            // Redirect to home after successful registration and login
             setTimeout(() => {
-                navigate('/home');
+                window.location.href = "/";
             }, 1500);
 
         } catch (error) {

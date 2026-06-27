@@ -20,6 +20,7 @@ import com.example.repository.ICartRepository;
 import com.example.repository.IItemRepository;
 
 @Service
+@Transactional
 public class CartService {
 
     @Autowired
@@ -38,7 +39,6 @@ public class CartService {
     private ItemService itemService;
 
     // 1. Get Cart (hoặc tạo mới nếu chưa có)
-    @Transactional
     public Cart getCartByAccount(Account account) {
         // Tìm Cart theo Account ID
         // Cách 1: Dùng method tự định nghĩa trong repository (nếu có)
@@ -54,7 +54,6 @@ public class CartService {
     }
 
     // 2. Thêm sản phẩm vào giỏ hàng
-    @Transactional
     public CartItemResponse addToCart(Long accountId, Long itemId, int quantity) {
         // Lấy Account
         Account account = getAccountById(accountId); 
@@ -86,7 +85,6 @@ public class CartService {
     }
 
     // 3. Xóa sản phẩm khỏi giỏ hàng
-    @Transactional
     public void removeFromCart(Long accountId, Long itemId) {
         Account account = getAccountById(accountId); // Cần implement
         Cart cart = getCartByAccount(account);
@@ -100,7 +98,6 @@ public class CartService {
     }
 
     // 4. Cập nhật số lượng sản phẩm trong giỏ hàng
-    @Transactional
     public CartItemResponse updateCartItemQuantity(Long accountId, Long itemId, int quantity) {
         if (quantity <= 0) {
             // Nếu số lượng <= 0, ta có thể xóa sản phẩm khỏi giỏ hàng
@@ -133,7 +130,6 @@ public class CartService {
     }
 
     // 6. Xóa toàn bộ giỏ hàng
-    @Transactional
     public void clearCart(Long accountId) {
         Account account = getAccountById(accountId); // Cần implement
         Cart cart = getCartByAccount(account);

@@ -7,7 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.dto.LoginResponse;
+
 import com.example.model.Account;
 import com.example.repository.IAccountRepository;
 
@@ -33,18 +33,14 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public LoginResponse checkLogin(String email, String password) {
+    public Account checkLogin(String email, String password) {
         Optional<Account> accountOpt = accountRepository.findByEmail(email);
 
         Account account = accountOpt
                 .filter(a -> passwordEncoder.matches(password, a.getPassword()))
                 .orElse(null);
 
-        if (account == null) {
-            return null;
-        }
-
-        return new LoginResponse(account.getId(), account.getEmail());
+        return account;
     }
 
     public Account getAccountById(Long id) {

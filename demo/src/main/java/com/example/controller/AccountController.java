@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dto.LoginRequest;
-import com.example.dto.LoginResponse;
+
 import com.example.model.Account;
 import com.example.service.AccountService;
 
@@ -40,7 +40,7 @@ public class AccountController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
         try {
-            LoginResponse response = accountService.checkLogin(request.getEmail(), request.getPassword());
+            Account response = accountService.checkLogin(request.email(), request.password());
             if (response != null) {
                 return ResponseEntity.ok(response);
             } else {

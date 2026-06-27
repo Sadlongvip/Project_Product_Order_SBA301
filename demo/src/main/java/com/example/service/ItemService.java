@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.dto.ItemRequest;
-import com.example.dto.ItemResponse;
 import com.example.model.Category;
 import com.example.model.Item;
 import com.example.repository.ICategoryRepository;
@@ -30,38 +29,22 @@ public class ItemService {
     private IShopRepository shopRepository;
     // ========================DTO========================
 
-    // Helper: Entity -> Response
-    public ItemResponse toResponse(Item item) {
-        ItemResponse res = new ItemResponse();
-        res.setId(item.getId());
-        res.setName(item.getName());
-        res.setDescription(item.getDescription());
-        res.setPrice(item.getPrice());
-        res.setImage(item.getImage());
-        res.setStock(item.getStock());
-        res.setCategoryId(item.getCategory().getId());
-        res.setCategoryName(item.getCategory().getName());
-        if (item.getShop() != null) {
-            res.setShopId(item.getShop().getId());
-            res.setShopName(item.getShop().getName());
-        }
-        return res;
-    }
+
 
     // Helper: Request -> Entity
     private Item toEntity(ItemRequest req) {
         Item item = new Item();
-        item.setName(req.getName());
-        item.setDescription(req.getDescription());
-        item.setPrice(req.getPrice());
-        item.setImage(req.getImage());
-        item.setStock(req.getStock());
-        Category cat = categoryRepository.findById(req.getCategoryId())
+        item.setName(req.name());
+        item.setDescription(req.description());
+        item.setPrice(req.price());
+        item.setImage(req.image());
+        item.setStock(req.stock());
+        Category cat = categoryRepository.findById(req.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         item.setCategory(cat);
         
-        if (req.getShopId() != null) {
-            Shop shop = shopRepository.findById(req.getShopId())
+        if (req.shopId() != null) {
+            Shop shop = shopRepository.findById(req.shopId())
                     .orElseThrow(() -> new RuntimeException("Shop not found"));
             item.setShop(shop);
         }
@@ -70,54 +53,50 @@ public class ItemService {
     }
 
     // GET all
-    public List<ItemResponse> getAllItemDto() {
-        return itemRepository.findAll().stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public List<Item> getAllItemDto() {
+        return itemRepository.findAll();
     }
 
     // GET by shop ID
-    public List<ItemResponse> getItemsByShopIdDto(Long shopId) {
-        return itemRepository.findByShopId(shopId).stream()
-                .map(this::toResponse)
-                .collect(Collectors.toList());
+    public List<Item> getItemsByShopIdDto(Long shopId) {
+        return itemRepository.findByShopId(shopId);
     }
 
     // GET by id
-    public ItemResponse getItemByIdDto(Long id) {
+    public Item getItemByIdDto(Long id) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
-        return toResponse(item);
+        return item;
     }
 
     // POST - create
-    public ItemResponse createItemDto(ItemRequest request) {
+    public Item createItemDto(ItemRequest request) {
         Item item = toEntity(request);
         Item saved = itemRepository.save(item);
-        return toResponse(saved);
+        return saved;
     }
 
     // PUT - update
-    public ItemResponse updateItemDto(Long id, ItemRequest request) {
+    public Item updateItemDto(Long id, ItemRequest request) {
         Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Item not found"));
-        item.setName(request.getName());
-        item.setDescription(request.getDescription());
-        item.setPrice(request.getPrice());
-        item.setImage(request.getImage());
-        item.setStock(request.getStock());
-        Category cat = categoryRepository.findById(request.getCategoryId())
+        item.setName(request.name());
+        item.setDescription(request.description());
+        item.setPrice(request.price());
+        item.setImage(request.image());
+        item.setStock(request.stock());
+        Category cat = categoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         item.setCategory(cat);
         
-        if (request.getShopId() != null) {
-            Shop shop = shopRepository.findById(request.getShopId())
+        if (request.shopId() != null) {
+            Shop shop = shopRepository.findById(request.shopId())
                     .orElseThrow(() -> new RuntimeException("Shop not found"));
             item.setShop(shop);
         }
         
         Item updated = itemRepository.save(item);
-        return toResponse(updated);
+        return updated;
     }
 
     // DELETE

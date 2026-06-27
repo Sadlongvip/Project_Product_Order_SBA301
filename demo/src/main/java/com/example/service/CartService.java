@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.dto.CartItemResponse;
+
 import com.example.model.Account;
 import com.example.model.Cart;
 import com.example.model.CartItem;
@@ -54,7 +54,7 @@ public class CartService {
     }
 
     // 2. Thêm sản phẩm vào giỏ hàng
-    public CartItemResponse addToCart(Long accountId, Long itemId, int quantity) {
+    public CartItem addToCart(Long accountId, Long itemId, int quantity) {
         // Lấy Account
         Account account = getAccountById(accountId); 
 
@@ -72,7 +72,7 @@ public class CartService {
             // Nếu đã có, cập nhật số lượng
             CartItem existingCartItem = existingCartItemOpt.get();
             existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
-            return toCartItemResponse(cartItemRepository.save(existingCartItem));
+            return cartItemRepository.save(existingCartItem);
         } else {
             // Nếu chưa có, tạo mới
             CartItem newCartItem = new CartItem();
@@ -80,7 +80,7 @@ public class CartService {
             newCartItem.setItem(item);
             newCartItem.setQuantity(quantity);
             newCartItem.setPrice(item.getPrice()); // Lưu thêm price
-            return toCartItemResponse(cartItemRepository.save(newCartItem));
+            return cartItemRepository.save(newCartItem);
         }
     }
 
@@ -98,7 +98,7 @@ public class CartService {
     }
 
     // 4. Cập nhật số lượng sản phẩm trong giỏ hàng
-    public CartItemResponse updateCartItemQuantity(Long accountId, Long itemId, int quantity) {
+    public CartItem updateCartItemQuantity(Long accountId, Long itemId, int quantity) {
         if (quantity <= 0) {
             // Nếu số lượng <= 0, ta có thể xóa sản phẩm khỏi giỏ hàng
             removeFromCart(accountId, itemId);
@@ -114,19 +114,17 @@ public class CartService {
         if (cartItemOpt.isPresent()) {
             CartItem cartItem = cartItemOpt.get();
             cartItem.setQuantity(quantity);
-            return toCartItemResponse(cartItemRepository.save(cartItem));
+            return cartItemRepository.save(cartItem);
         } else {
             throw new NoSuchElementException("Cart item not found");
         }
     }
 
     // 5. Lấy danh sách tất cả các item trong giỏ hàng
-    public List<CartItemResponse> getCartItems(Long accountId) {
+    public List<CartItem> getCartItems(Long accountId) {
         Account account = getAccountById(accountId); // Cần implement
         Cart cart = getCartByAccount(account);
-        return cart.getCartItems().stream()
-                .map(this::toCartItemResponse)
-                .collect(Collectors.toList());
+        return cart.getCartItems();
     }
 
     // 6. Xóa toàn bộ giỏ hàng
@@ -147,16 +145,6 @@ public class CartService {
                 .sum();
     }
 
-    // ==================== Helper ====================
-
-    private CartItemResponse toCartItemResponse(CartItem cartItem) {
-        return new CartItemResponse(
-                cartItem.getId(),
-                cartItem.getQuantity(),
-                cartItem.getPrice(),
-                itemService.toResponse(cartItem.getItem())
-        );
-    }
 
     private Account getAccountById(Long accountId) {
         return accountService.getAccountById(accountId);

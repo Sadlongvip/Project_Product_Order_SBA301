@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.dto.OrderResponse;
+import com.example.model.Order;
 import com.example.service.OrderService;
 
 @RestController
@@ -26,7 +26,7 @@ public class OrderController {
     @GetMapping("/{accountId}")
     public ResponseEntity<?> getOrdersByAccount(@PathVariable Long accountId) {
         try {
-            List<OrderResponse> orders = orderService.getOrdersByAccountId(accountId);
+            List<Order> orders = orderService.getOrdersByAccountId(accountId);
             return ResponseEntity.ok(orders);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

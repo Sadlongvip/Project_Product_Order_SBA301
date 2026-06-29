@@ -31,7 +31,7 @@ export default function FormItem({ itemData, onSubmit, onCancel }) {
                 price: itemData.price || "",
                 stock: itemData.stock || "",
                 description: itemData.description || "",
-                categoryId: itemData.categoryId || "",
+                categoryId: itemData.categoryId || itemData.category?.id || "",
                 image: itemData.image || ""
             });
         } else {

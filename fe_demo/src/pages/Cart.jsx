@@ -5,6 +5,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "../hooks/useAccount";
 import { getCartById, updateCart, removeFromCart, clearCart } from "../service/CartService";
+import { useOrder } from "../context/OrderContext";
 
 export default function Cart() {
     const account = useAccount();
@@ -12,6 +13,7 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState({ show: false, msg: "", variant: "success" });
+    const { handleCheckout } = useOrder();
 
     // Hiển thị alert rồi tự ẩn sau 3s
     function showAlert(msg, variant = "success") {
@@ -75,6 +77,17 @@ export default function Cart() {
         const price = Number(ci.item?.price ?? 0);
         return sum + price * ci.quantity;
     }, 0);
+
+    // Xử lý thanh toán
+    async function onCheckoutClick() {
+        try {
+            await handleCheckout();
+            showAlert("Đặt hàng thành công!");
+            setTimeout(() => navigate("/orders"), 1500);
+        } catch (error) {
+            showAlert(error.response?.data || "Đặt hàng thất bại do không đủ tồn kho hoặc lỗi server!", "danger");
+        }
+    }
 
     return (
         <Container className="mt-4">
@@ -191,7 +204,7 @@ export default function Cart() {
                             <h4 className="text-danger fw-bold">
                                 {total.toLocaleString("vi-VN")} đ
                             </h4>
-                            <Button variant="success" className="w-100 mt-2">
+                            <Button variant="success" className="w-100 mt-2" onClick={onCheckoutClick}>
                                 Đặt hàng
                             </Button>
                         </div>

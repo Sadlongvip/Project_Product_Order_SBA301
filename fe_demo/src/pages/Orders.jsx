@@ -1,46 +1,22 @@
-import { useEffect, useState } from "react";
-import {
-    Container, Table, Spinner, Badge, Image, Accordion
-} from "react-bootstrap";
+import { Container, Table, Spinner, Badge, Image, Accordion, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useAccount } from "../hooks/useAccount";
-import { getOrdersByAccount } from "../service/OrderService";
+import { useOrder } from "../context/OrderContext";
 
 export default function Orders() {
-    const account = useAccount();
     const navigate = useNavigate();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    async function loadOrders() {
-        if (!account) {
-            navigate("/login");
-            return;
-        }
-        setLoading(true);
-        const data = await getOrdersByAccount(account.id);
-        setOrders(Array.isArray(data) ? data : []);
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        loadOrders();
-    }, []);
+    const { orders, loading, handleCancelOrder } = useOrder();
 
     return (
         <Container className="mt-4">
             {/* Header */}
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>
-                    Lich su don hang{" "}
-                    <Badge bg="secondary">{orders.length} don</Badge>
+                    Lịch sử đơn hàng{" "}
+                    <Badge bg="secondary">{orders.length} đơn</Badge>
                 </h2>
-                <button
-                    className="btn btn-outline-secondary"
-                    onClick={() => navigate("/store")}
-                >
-                    ← Tiep tuc mua sam
-                </button>
+                <Button variant="outline-secondary" onClick={() => navigate("/store")}>
+                    ← Tiếp tục mua sắm
+                </Button>
             </div>
 
             {/* Loading */}
@@ -55,31 +31,31 @@ export default function Orders() {
                 /* Empty state */
                 <div className="text-center py-5 text-muted">
                     <p style={{ fontSize: "3rem" }}>📦</p>
-                    <h5>Ban chua co don hang nao</h5>
-                    <button
-                        className="btn btn-primary mt-2"
-                        onClick={() => navigate("/store")}
-                    >
-                        Mua hang ngay
-                    </button>
+                    <h5>Bạn chưa có đơn hàng nào</h5>
+                    <Button variant="primary" className="mt-2" onClick={() => navigate("/store")}>
+                        Mua hàng ngay
+                    </Button>
                 </div>
 
             ) : (
-                /* Order list — mỗi Order là 1 Accordion item */
+                /* Order list */
                 <Accordion>
                     {orders.map((order, index) => (
                         <Accordion.Item eventKey={String(order.id)} key={order.id}>
                             <Accordion.Header>
-                                <div className="d-flex justify-content-between w-100 pe-3">
+                                <div className="d-flex justify-content-between align-items-center w-100 pe-3">
                                     <span>
-                                        <strong>Don hang #{order.id}</strong>
+                                        <strong>Đơn hàng #{order.id}</strong>
                                         {" — "}
-                                        <Badge bg="info" text="dark">
-                                            {order.orderItems?.length ?? 0} san pham
+                                        <Badge bg="info" text="dark" className="me-2">
+                                            {order.orderItems?.length ?? 0} sản phẩm
                                         </Badge>
+                                        {order.status === "PENDING" && <Badge bg="warning">Chờ xử lý</Badge>}
+                                        {order.status === "COMPLETED" && <Badge bg="success">Thành công</Badge>}
+                                        {order.status === "CANCELLED" && <Badge bg="danger">Đã hủy</Badge>}
                                     </span>
                                     <span className="text-danger fw-bold">
-                                        {Number(order.totalPrice ?? 0).toLocaleString("vi-VN")} d
+                                        {Number(order.totalPrice ?? 0).toLocaleString("vi-VN")} đ
                                     </span>
                                 </div>
                             </Accordion.Header>
@@ -89,11 +65,11 @@ export default function Orders() {
                                     <thead className="table-secondary">
                                         <tr>
                                             <th>#</th>
-                                            <th>Hinh anh</th>
-                                            <th>San pham</th>
-                                            <th>Don gia</th>
-                                            <th>So luong</th>
-                                            <th>Thanh tien</th>
+                                            <th>Hình ảnh</th>
+                                            <th>Sản phẩm</th>
+                                            <th>Đơn giá</th>
+                                            <th>Số lượng</th>
+                                            <th>Thành tiền</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -102,28 +78,35 @@ export default function Orders() {
                                                 <td>{i + 1}</td>
                                                 <td>
                                                     <Image
-                                                        src={oi.itemImage}
-                                                        alt={oi.itemName}
+                                                        src={oi.item?.image}
+                                                        alt={oi.item?.name}
                                                         style={{ width: "60px", height: "60px", objectFit: "cover" }}
                                                         rounded
                                                     />
                                                 </td>
-                                                <td><strong>{oi.itemName}</strong></td>
+                                                <td><strong>{oi.item?.name}</strong></td>
                                                 <td className="text-success fw-bold">
-                                                    {Number(oi.price).toLocaleString("vi-VN")} d
+                                                    {Number(oi.price).toLocaleString("vi-VN")} đ
                                                 </td>
                                                 <td>{oi.quantity}</td>
                                                 <td className="text-danger fw-bold">
-                                                    {Number(oi.subtotal).toLocaleString("vi-VN")} d
+                                                    {(Number(oi.price) * oi.quantity).toLocaleString("vi-VN")} đ
                                                 </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                     <tfoot className="table-light">
                                         <tr>
-                                            <td colSpan={5} className="text-end fw-bold">Tong cong:</td>
+                                            <td colSpan={5} className="text-end fw-bold">
+                                                {order.status === 'PENDING' && (
+                                                    <Button variant="danger" size="sm" className="float-start ms-2" onClick={() => handleCancelOrder(order.id)}>
+                                                        Hủy đơn hàng
+                                                    </Button>
+                                                )}
+                                                Tổng cộng:
+                                            </td>
                                             <td className="text-danger fw-bold">
-                                                {Number(order.totalPrice ?? 0).toLocaleString("vi-VN")} d
+                                                {Number(order.totalPrice ?? 0).toLocaleString("vi-VN")} đ
                                             </td>
                                         </tr>
                                     </tfoot>

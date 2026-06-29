@@ -8,13 +8,11 @@ export default function TableShop({ listItem = [], onEdit, onDelete }){
                 <tr>
                     <th>#</th>
                     <th>Name</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Logo</th>
-                    <th>Banner</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Category</th>
+                    <th>Image</th>
                     <th>Description</th>
-                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -23,25 +21,17 @@ export default function TableShop({ listItem = [], onEdit, onDelete }){
                     <tr key={item.id}>
                         <td>{item.id}</td>
                         <td>{item.name}</td>
-                        <td>{item.address}</td>
-                        <td>{item.phone}</td>
-                        <td>{item.email}</td>
+                        <td>{item.price}</td>
+                        <td>{item.stock}</td>
+                        <td>{item.category?.name || "N/A"}</td>
                         <td>
-                            {item.logo ? (
-                                <Image src={item.logo} alt="Logo" width={100} height={100} />
-                            ) : (
-                                "No Image"
-                            )}
-                        </td>
-                        <td>
-                            {item.banner ? (
-                                <Image src={item.banner} alt="Banner" width={100} height={100} />
+                            {item.image ? (
+                                <Image src={item.image} alt={item.name} width={100} height={100} style={{ objectFit: 'contain' }} />
                             ) : (
                                 "No Image"
                             )}
                         </td>
                         <td>{item.description}</td>
-                        <td>{item.status}</td>
                         <td className='d-flex flex-row justify-content-between w-100'>
                             <Button className='me-3' variant="primary" onClick={() => onEdit(item)}>
                                 Edit

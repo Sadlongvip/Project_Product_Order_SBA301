@@ -43,11 +43,11 @@ public class Account {
     private String address;
 
     // ==================== Association ====================
-    @JsonIgnoreProperties("account")
+    @JsonIgnoreProperties({"account", "cartItems"})
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
-    @JsonIgnoreProperties("account")
+    @JsonIgnoreProperties({"account", "orderItems"})
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 

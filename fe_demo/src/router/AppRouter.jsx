@@ -11,6 +11,7 @@ import ErrorLink from '../pages/ErrorLink';
 import SettingsUser from '../pages/SettingUser';
 import Shop from '../pages/Shop';
 import { ShopProvider } from '../context/ShopContext';
+import { OrderProvider } from '../context/OrderContext';
 import ProtectedRoute from './ProtectedRoute';
 import FormItem from '../components/FormItem';
 export default function AppRouter() {
@@ -21,8 +22,8 @@ export default function AppRouter() {
             <Route path="/" element={<Home />} />
             <Route path="/home-v2" element={<HomeV2 />} />
             <Route path="/store" element={<ProtectedRoute element={<Store />} />} />
-            <Route path="/cart" element={<ProtectedRoute element={<Cart />} />} />
-            <Route path="/orders" element={<ProtectedRoute element={<Orders />} />} />
+            <Route path="/cart" element={<ProtectedRoute element={<OrderProvider><Cart /></OrderProvider>} />} />
+            <Route path="/orders" element={<ProtectedRoute element={<OrderProvider><Orders /></OrderProvider>} />} />
             <Route path="/errorlink" element={<ErrorLink />} />
             <Route path="/setting" element={<ProtectedRoute element={<SettingsUser />} />} />
 

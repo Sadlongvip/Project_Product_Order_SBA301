@@ -3,7 +3,7 @@ import api from "../api/axiosInstance"
 export async function getItem(){
     try {
         const res = await api.get("item");
-        return res.data;
+        return Array.isArray(res.data) ? res.data : (res.data?.content || res.data?.data || []);
     } catch (error) {
         console.error(error);
         return [];
@@ -13,7 +13,7 @@ export async function getItem(){
 export async function getItemByShopId(shopId){
     try {
         const res = await api.get(`item/shop/${shopId}`);
-        return res.data;
+        return Array.isArray(res.data) ? res.data : (res.data?.content || res.data?.data || []);
     } catch (error) {
         console.error(error);
         return [];
@@ -26,7 +26,7 @@ export async function getItemById(id){
         return res.data;
     } catch (error) {
         console.error(error);
-        return [];
+        return null;
     }
 }
 

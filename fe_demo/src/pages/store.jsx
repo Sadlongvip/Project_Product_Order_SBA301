@@ -122,7 +122,6 @@ export default function Store() {
         try {
             const response = await getItem();
             console.log("API response:", response);
-            // setItemData(Array.isArray(response) ? response : []);
             setItemData(response);
         } catch (error) {
             console.log(error);

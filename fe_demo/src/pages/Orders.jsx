@@ -6,6 +6,17 @@ export default function Orders() {
     const navigate = useNavigate();
     const { orders, loading, handleCancelOrder } = useOrder();
 
+    const onCancelClick = (orderId) => {
+        const reason = window.prompt("Vui lòng nhập lý do hủy đơn hàng:");
+        if (reason !== null) {
+            if (reason.trim() === "") {
+                alert("Bạn phải nhập lý do để hủy đơn hàng.");
+                return;
+            }
+            handleCancelOrder(orderId, reason);
+        }
+    };
+
     return (
         <Container className="mt-4">
             {/* Header */}
@@ -50,9 +61,19 @@ export default function Orders() {
                                         <Badge bg="info" text="dark" className="me-2">
                                             {order.orderItems?.length ?? 0} sản phẩm
                                         </Badge>
+                                        {order.shop && (
+                                            <Badge bg="secondary" className="me-2">Shop: {order.shop.name}</Badge>
+                                        )}
                                         {order.status === "PENDING" && <Badge bg="warning">Chờ xử lý</Badge>}
                                         {order.status === "COMPLETED" && <Badge bg="success">Thành công</Badge>}
-                                        {order.status === "CANCELLED" && <Badge bg="danger">Đã hủy</Badge>}
+                                        {order.status === "CANCELLED" && (
+                                            <>
+                                                <Badge bg="danger" className="me-2">Đã hủy</Badge>
+                                                {order.cancelReason?.reasonText && (
+                                                    <small className="text-danger">Lý do: {order.cancelReason.reasonText}</small>
+                                                )}
+                                            </>
+                                        )}
                                     </span>
                                     <span className="text-danger fw-bold">
                                         {Number(order.totalPrice ?? 0).toLocaleString("vi-VN")} đ
@@ -99,7 +120,7 @@ export default function Orders() {
                                         <tr>
                                             <td colSpan={5} className="text-end fw-bold">
                                                 {order.status === 'PENDING' && (
-                                                    <Button variant="danger" size="sm" className="float-start ms-2" onClick={() => handleCancelOrder(order.id)}>
+                                                    <Button variant="danger" size="sm" className="float-start ms-2" onClick={() => onCancelClick(order.id)}>
                                                         Hủy đơn hàng
                                                     </Button>
                                                 )}

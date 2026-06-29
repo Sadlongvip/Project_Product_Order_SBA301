@@ -10,4 +10,6 @@ import com.example.model.Order;
 @Repository
 public interface IOrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByAccountId(Long accountId);
+    
+    List<Order> findByShopId(Long shopId);
 }

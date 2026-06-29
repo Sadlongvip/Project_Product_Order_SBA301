@@ -11,6 +11,17 @@ export async function getOrdersByAccount(accountId) {
     }
 }
 
+// Lấy danh sách đơn hàng theo shopId
+export async function getOrdersByShop(shopId) {
+    try {
+        const res = await api.get(`orders/shop/${shopId}`);
+        return res.data;
+    } catch (error) {
+        console.error(error);
+        return [];
+    }
+}
+
 // Đặt hàng
 export async function checkoutOrder(accountId) {
     try {
@@ -22,10 +33,12 @@ export async function checkoutOrder(accountId) {
     }
 }
 
-// Hủy đơn hàng
-export async function cancelOrderAPI(orderId) {
+// Hủy đơn hàng (kèm lý do)
+export async function cancelOrderAPI(orderId, reasonText = "") {
     try {
-        const res = await api.put(`orders/${orderId}/cancel`);
+        const res = await api.put(`orders/${orderId}/cancel`, null, {
+            params: { reasonText }
+        });
         return res.data;
     } catch (error) {
         console.error("Lỗi hủy đơn hàng", error);

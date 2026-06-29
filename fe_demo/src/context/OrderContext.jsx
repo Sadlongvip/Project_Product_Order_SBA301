@@ -42,20 +42,28 @@ export function OrderProvider({ children }) {
         }
     };
 
-    const handleCancelOrder = async (orderId) => {
+    const handleCancelOrder = async (orderId, reasonText = "", onSuccessCallback) => {
         try {
-            await cancelOrderAPI(orderId);
-            await fetchOrders();
+            await cancelOrderAPI(orderId, reasonText);
+            if (onSuccessCallback) {
+                onSuccessCallback();
+            } else {
+                await fetchOrders();
+            }
         } catch (error) {
             console.error("Cancel failed:", error);
             throw error;
         }
     };
 
-    const handleAcceptOrder = async (orderId) => {
+    const handleAcceptOrder = async (orderId, onSuccessCallback) => {
         try {
             await acceptOrderAPI(orderId);
-            await fetchOrders();
+            if (onSuccessCallback) {
+                onSuccessCallback();
+            } else {
+                await fetchOrders();
+            }
         } catch (error) {
             console.error("Accept failed:", error);
             throw error;

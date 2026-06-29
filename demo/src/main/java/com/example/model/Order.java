@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -42,8 +43,17 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
+    
+    @JsonIgnoreProperties("account")
+    @ManyToOne
+    @JoinColumn(name = "shop_id", nullable = true)
+    private Shop shop;
 
     @JsonIgnoreProperties("order")
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems;
+    
+    @JsonIgnoreProperties("order")
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CancelReason cancelReason;
 }

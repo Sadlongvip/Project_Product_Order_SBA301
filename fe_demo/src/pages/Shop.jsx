@@ -9,6 +9,7 @@ import { createShop } from '../service/ShopService';
 import { ValidateShopInput, ValidateItemInput } from '../validation/Validation';
 import FormItem from '../components/FormItem';
 import { createItem, updateItem } from '../service/ItemService';
+import ShopOrdersModal from '../components/ShopOrdersModal';
 
 
 
@@ -18,6 +19,7 @@ export default function Shop(){
     const [show, setShow] = useState(false);
     const [showCreate, setShowCreate] = useState(false);
     const [showItemForm, setShowItemForm] = useState(false);
+    const [showOrdersModal, setShowOrdersModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
     const user = useAccount();
     const navigate = useNavigate();
@@ -131,9 +133,14 @@ export default function Shop(){
                 <>
                     <div className='d-flex justify-content-between my-3'>
                         <h1>{state.data.name}</h1>
-                        <Button variant="primary" onClick={handleShowItemForm}>
-                            Add new Item
-                        </Button>
+                        <div>
+                            <Button variant="info" className="me-2 text-white" onClick={() => setShowOrdersModal(true)}>
+                                Quản lý Đơn hàng
+                            </Button>
+                            <Button variant="primary" onClick={handleShowItemForm}>
+                                Add new Item
+                            </Button>
+                        </div>
                     </div>
                     <div>
                         <TableShop listItem={listItem} onEdit={handleItemEdit} onDelete={handleDelete}/>
@@ -175,6 +182,12 @@ export default function Shop(){
                     />
                 </Modal.Body>
             </Modal>
+
+            <ShopOrdersModal 
+                show={showOrdersModal} 
+                onHide={() => setShowOrdersModal(false)} 
+                shopId={state.data.id} 
+            />
         </Container>
         </>
     );

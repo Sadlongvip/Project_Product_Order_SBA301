@@ -27,7 +27,7 @@ export default function AppRouter() {
             <Route path="/errorlink" element={<ErrorLink />} />
             <Route path="/setting" element={<ProtectedRoute element={<SettingsUser />} />} />
 
-            <Route path="/shop" element={<ProtectedRoute element={<ShopProvider><Outlet /></ShopProvider>} />}>
+            <Route path="/shop" element={<ProtectedRoute element={<ShopProvider><OrderProvider><Outlet /></OrderProvider></ShopProvider>} />}>
                 <Route index element={<Shop />} />
                 <Route path="item/:id" element={<FormItem />} />
             </Route>

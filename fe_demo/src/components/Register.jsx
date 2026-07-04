@@ -3,7 +3,7 @@ import { Button, Container, Form, Row, Alert, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-
+import { validateUserInput } from "../validation/Validation";
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:8080/api'
 });
@@ -40,9 +40,8 @@ export default function Register() {
             // Validate form before sending
             dispatch({ type: 'VALIDATE_FORM' });
 
-            // Check if password and confirmPassword match
-            if (state.values.password !== state.values.confirmPassword) {
-                setRegisterError("Passwords do not match!");
+            const validationResult = validateUserInput(state.values);
+            if (!validationResult.isValid) {
                 setLoading(false);
                 return;
             }

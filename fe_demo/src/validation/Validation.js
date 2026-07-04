@@ -99,7 +99,7 @@ export const validateField = (name, value, allValues = {}) => {
  */
 export const validateUserInput = (allValues) => {
   const errors = {};
-  const fields = ['userName', 'email', 'password', 'confirmPassword', 'phoneNumber'];
+  const fields = ['username', 'email', 'password', 'confirmPassword', 'phoneNumber', 'address'];
 
   fields.forEach((field) => {
     const error = validateField(field, allValues[field], allValues);

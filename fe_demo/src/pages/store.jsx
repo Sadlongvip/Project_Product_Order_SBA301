@@ -139,6 +139,10 @@ export default function Store() {
     // );
     return (
         <Container>
+            <div className="text-center">
+                <h1 className="mt-3">Store</h1>
+                <p>Danh sách sản phẩm có sẵn tại cửa hàng</p>
+            </div>
             <div className="my-3 d-flex gap-2">
                 <input
                     type="text"

@@ -27,7 +27,7 @@ import { validateField, ValidateOrderInput, ValidateShopInput } from '../validat
 
 export function reduceForm(state, action) {
     switch (action.type) {
-        case 'OnChange':
+        case 'OnChange': {
             const { field, value } = action.payload;
             const newValues = { ...state.values, [field]: value };
             const newErrors = { ...state.errors }
@@ -46,7 +46,8 @@ export function reduceForm(state, action) {
                 values: newValues,
                 errors: newErrors
             };
-        case 'TOUCH_FIELD':
+        }
+        case 'TOUCH_FIELD': {
             const { field: touchField, value: touchValue } = action.payload;
             const errorMessage = validateField(touchField, touchValue || state.values[touchField], state.values);
             const newTouched = {
@@ -64,7 +65,8 @@ export function reduceForm(state, action) {
                 touched: newTouched,
                 errors: newErrors2
             };
-        case 'VALIDATE_FORM':
+        }
+        case 'VALIDATE_FORM': {
             const currentErrors = { ...state.errors };
             const newTouched2 = { ...state.touched };
 
@@ -78,6 +80,7 @@ export function reduceForm(state, action) {
                 errors: currentErrors,
                 touched: newTouched2
             };
+        }
         case 'SET_AUTHENTICATED':
             return {
                 ...state,
@@ -113,7 +116,7 @@ export function reduceForm(state, action) {
 // };
 export function reduceOrderForm(state, action) {
     switch (action.type) {
-        case 'OnChange':
+        case 'OnChange': {
             const { field, value } = action.payload;
             const newValues = { ...state.values, [field]: value };
             const newErrors = { ...state.errors };
@@ -128,7 +131,8 @@ export function reduceOrderForm(state, action) {
                 values: newValues,
                 errors: newErrors
             };
-        case 'TOUCH_FIELD': //payload chỉ gửi tên và mark field đó bị touched
+        }
+        case 'TOUCH_FIELD': { //payload chỉ gửi tên và mark field đó bị touched
             const touchField = {
                 ...state.touched,
                 [action.payload.field]: true
@@ -140,7 +144,8 @@ export function reduceOrderForm(state, action) {
                 touched: touchField,
                 errors: errors
             };
-        case 'VALIDATE_FORM':
+        }
+        case 'VALIDATE_FORM': {
             const allErrors = ValidateOrderInput(state.values);
             const newTouched2 = { ...state.touched };
 
@@ -153,6 +158,7 @@ export function reduceOrderForm(state, action) {
                 errors: allErrors,
                 touched: newTouched2
             };
+        }
         case 'SET_AUTHENTICATED':
             return {
                 ...state,
@@ -165,7 +171,7 @@ export function reduceOrderForm(state, action) {
 
 export function reduceShop(state, action) {
     switch (action.type) {
-        case 'CHANGE_FIELD':
+        case 'CHANGE_FIELD': {
             const { field, value } = action.payload;
             return {
                 ...state,
@@ -174,6 +180,7 @@ export function reduceShop(state, action) {
                     [field]: value
                 }
             };
+        }
         case 'SET_SHOP':
             return {
                 ...state,
@@ -182,8 +189,8 @@ export function reduceShop(state, action) {
                     ...action.payload
                 }
             };
-        case 'TOUCHED_FIELD':
-            const { field: touchField, value: touchValue } = action.payload;
+        case 'TOUCHED_FIELD': {
+            const { field: touchField } = action.payload;
             return {
                 ...state,
                 touched: {
@@ -191,6 +198,7 @@ export function reduceShop(state, action) {
                     [touchField]: true
                 }
             };
+        }
 
         // Validate + set touched tất cả field 
         case 'SUBMIT': {
@@ -211,11 +219,15 @@ export function reduceShop(state, action) {
             return {
                 ...state,
                 data: {
-                    name: '',
-                    description: '',
-                    image: '',
-                    address: '',
-                    phoneNumber: '',
+                    name: "",
+                    address: "",
+                    phone: "",
+                    email: "",
+                    logo: "",
+                    banner: "",
+                    description: "",
+                    status: "",
+                    accountId: ""
                 },
                 errors: {},
                 touched: {}
@@ -227,11 +239,15 @@ export function reduceShop(state, action) {
             return {
                 ...state,
                 data: {
-                    name: '',
-                    description: '',
-                    image: '',
-                    address: '',
-                    phoneNumber: '',
+                    name: "",
+                    address: "",
+                    phone: "",
+                    email: "",
+                    logo: "",
+                    banner: "",
+                    description: "",
+                    status: "",
+                    accountId: ""
                 },
                 errors: {},
                 touched: {}

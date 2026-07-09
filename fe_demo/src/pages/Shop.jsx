@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { Button, Container, Modal } from 'react-bootstrap';
 import { useShop } from '../context/ShopContext';
 import TableShop from '../components/TableShop';
-import { useNavigate } from 'react-router-dom';
 import { useAccount } from '../hooks/useAccount';
 import FormShop from '../components/FormShop';
 import { createShop } from '../service/ShopService';
-import { ValidateShopInput, ValidateItemInput } from '../validation/Validation';
+import { ValidateShopInput } from '../validation/Validation';
 import FormItem from '../components/FormItem';
-import { createItem, updateItem } from '../service/ItemService';
+import { createItem, updateItem, deleteItem } from '../service/ItemService';
 import ShopOrdersModal from '../components/ShopOrdersModal';
 
 
@@ -21,8 +20,8 @@ export default function Shop(){
     const [showItemForm, setShowItemForm] = useState(false);
     const [showOrdersModal, setShowOrdersModal] = useState(false);
     const [editingItem, setEditingItem] = useState(null);
+    const [deletingItem, setDeletingItem] = useState(null);
     const user = useAccount();
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,11 +68,27 @@ export default function Shop(){
     }
 
     const handleDelete = (item) => {
+        setDeletingItem(item);
         setShow(true);
     }
 
-    const handleConfirmDelete = (item) => {
-        setShow(false);
+    const handleConfirmDelete = async () => {
+        if (!deletingItem) return;
+        try {
+            const res = await deleteItem(deletingItem.id);
+            if (res !== null) {
+                alert("Xóa sản phẩm thành công!");
+                fetchData();
+            } else {
+                alert("Đã xảy ra lỗi khi xóa sản phẩm! (Có thể sản phẩm đang thuộc một đơn hàng)");
+            }
+        } catch (error) {
+            console.error("Lỗi xóa sản phẩm:", error);
+            alert("Đã xảy ra lỗi hệ thống khi xóa sản phẩm!");
+        } finally {
+            setShow(false);
+            setDeletingItem(null);
+        }
     }
 
     const handleItemCreate = async (data) => {
@@ -188,6 +203,24 @@ export default function Shop(){
                 onHide={() => setShowOrdersModal(false)} 
                 shopId={state.data.id} 
             />
+
+            {/* Modal xác nhận xóa sản phẩm */}
+            <Modal show={show} onHide={() => { setShow(false); setDeletingItem(null); }} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Xác nhận xóa sản phẩm</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Bạn có chắc chắn muốn xóa sản phẩm <strong>{deletingItem?.name}</strong>? Hành động này không thể hoàn tác.
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => { setShow(false); setDeletingItem(null); }}>
+                        Hủy
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>
+                        Đồng ý xóa
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
         </>
     );

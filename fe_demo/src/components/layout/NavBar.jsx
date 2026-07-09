@@ -19,7 +19,7 @@ export default function NavBar() {
     return (
         <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
             <Container>
-                <Navbar.Brand as={NavLink} to="/home">
+                <Navbar.Brand as={NavLink} to="/">
                     BOOK STORE
                 </Navbar.Brand>
 

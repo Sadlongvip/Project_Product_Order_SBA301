@@ -6,19 +6,23 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from "../hooks/useAccount";
 import { getCartById, updateCart, removeFromCart, clearCart } from "../service/CartService";
 import { useOrder } from "../context/OrderContext";
+import { useToast } from "../context/ToastContext";
 
 export default function Cart() {
     const account = useAccount();
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [alert, setAlert] = useState({ show: false, msg: "", variant: "success" });
     const { handleCheckout } = useOrder();
+    const toast = useToast();
 
-    // Hiển thị alert rồi tự ẩn sau 3s
+    // Hiển thị toast
     function showAlert(msg, variant = "success") {
-        setAlert({ show: true, msg, variant });
-        setTimeout(() => setAlert(a => ({ ...a, show: false })), 3000);
+        if (variant === "danger") {
+            toast.error(msg);
+        } else {
+            toast.success(msg);
+        }
     }
 
     // Load giỏ hàng
@@ -107,12 +111,6 @@ export default function Cart() {
                     )}
                 </div>
             </div>
-
-            {alert.show && (
-                <Alert variant={alert.variant} dismissible onClose={() => setAlert(a => ({ ...a, show: false }))}>
-                    {alert.msg}
-                </Alert>
-            )}
 
             {loading ? (
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>

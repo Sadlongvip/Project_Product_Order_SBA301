@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from "../hooks/useAccount";
 import { getCartById, updateCart, removeFromCart, clearCart } from "../service/CartService";
 import { useOrder } from "../context/OrderContext";
-import { useToast } from "../context/ToastContext";
+import { useAlert } from "../context/AlertContext";
 
 export default function Cart() {
     const account = useAccount();
@@ -14,14 +14,14 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const { handleCheckout } = useOrder();
-    const toast = useToast();
+    const alert = useAlert();
 
-    // Hiển thị toast
+    // Hiển thị alert
     function showAlert(msg, variant = "success") {
         if (variant === "danger") {
-            toast.error(msg);
+            alert.error(msg);
         } else {
-            toast.success(msg);
+            alert.success(msg);
         }
     }
 

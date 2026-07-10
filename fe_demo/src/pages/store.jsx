@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getItem } from "../service/ItemService";
 import { addToCart } from "../service/CartService";
 import { useAccount } from "../hooks/useAccount";
-import { useToast } from "../context/ToastContext";
+import { useAlert } from "../context/AlertContext";
 
 const ListItem = [
     {
@@ -85,7 +85,7 @@ export default function Store() {
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [search, setSearch] = useState("");
-    const toast = useToast();
+    const alert = useAlert();
 
 
     const handleShow = () => setShowModal(true);
@@ -102,9 +102,9 @@ export default function Store() {
         setLoadingButton(true);
         const responeStatus = await addToCart(selectedItem.id, account?.id);
         if (responeStatus == 200) {
-            toast.success("Đã thêm vào giỏ hàng thành công!");
+            alert.success("Đã thêm vào giỏ hàng thành công!");
         } else {
-            toast.error("Thêm vào giỏ hàng thất bại!");
+            alert.error("Thêm vào giỏ hàng thất bại!");
         }
         setLoadingButton(false);
         handleClose();

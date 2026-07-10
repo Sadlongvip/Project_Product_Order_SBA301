@@ -9,7 +9,7 @@ import { ValidateShopInput } from '../validation/Validation';
 import FormItem from '../components/FormItem';
 import { createItem, updateItem, deleteItem } from '../service/ItemService';
 import ShopOrdersModal from '../components/ShopOrdersModal';
-import { useToast } from '../context/ToastContext';
+import { useAlert } from '../context/AlertContext';
 
 
 
@@ -23,7 +23,7 @@ export default function Shop(){
     const [editingItem, setEditingItem] = useState(null);
     const [deletingItem, setDeletingItem] = useState(null);
     const user = useAccount();
-    const toast = useToast();
+    const alert = useAlert();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,11 +48,11 @@ export default function Shop(){
             await createShop(shopDataToSubmit);
             dispatch({ type: "SUBMIT_SUCCESS" });
             setShowCreate(false);
-            toast.success("Tạo cửa hàng mới thành công!");
+            alert.success("Tạo cửa hàng mới thành công!");
             fetchData(); // Tự động load lại dữ liệu Shop thay vì F5 trình duyệt
         } catch (error) {
             dispatch({ type: "SUBMIT_ERROR", payload: error.message });
-            toast.error("Có lỗi xảy ra khi tạo cửa hàng: " + error.message);
+            alert.error("Có lỗi xảy ra khi tạo cửa hàng: " + error.message);
         }
     }
 
@@ -81,14 +81,14 @@ export default function Shop(){
         try {
             const res = await deleteItem(deletingItem.id);
             if (res !== null) {
-                toast.success("Xóa sản phẩm thành công!");
+                alert.success("Xóa sản phẩm thành công!");
                 fetchData();
             } else {
-                toast.error("Đã xảy ra lỗi khi xóa sản phẩm! (Có thể sản phẩm đang thuộc một đơn hàng)");
+                alert.error("Đã xảy ra lỗi khi xóa sản phẩm! (Có thể sản phẩm đang thuộc một đơn hàng)");
             }
         } catch (error) {
             console.error("Lỗi xóa sản phẩm:", error);
-            toast.error("Đã xảy ra lỗi hệ thống khi xóa sản phẩm!");
+            alert.error("Đã xảy ra lỗi hệ thống khi xóa sản phẩm!");
         } finally {
             setShow(false);
             setDeletingItem(null);
@@ -104,15 +104,15 @@ export default function Shop(){
             };
             const res = await createItem(itemDataToSubmit);
             if (res) {
-                toast.success("Tạo sản phẩm thành công!");
+                alert.success("Tạo sản phẩm thành công!");
                 fetchData(); // Tự động load lại danh sách Item
                 setShowItemForm(false);
             } else {
-                toast.error("Đã xảy ra lỗi khi tạo sản phẩm!");
+                alert.error("Đã xảy ra lỗi khi tạo sản phẩm!");
             }
         } catch (error) {
             console.error(error);
-            toast.error("Đã xảy ra lỗi hệ thống khi tạo sản phẩm!");
+            alert.error("Đã xảy ra lỗi hệ thống khi tạo sản phẩm!");
         }
     }
 
@@ -126,15 +126,15 @@ export default function Shop(){
             };
             const res = await updateItem(itemDataToSubmit);
             if (res) {
-                toast.success("Cập nhật sản phẩm thành công!");
+                alert.success("Cập nhật sản phẩm thành công!");
                 fetchData(); // Tự động load lại danh sách Item
                 setShowItemForm(false);
             } else {
-                toast.error("Đã xảy ra lỗi khi cập nhật sản phẩm!");
+                alert.error("Đã xảy ra lỗi khi cập nhật sản phẩm!");
             }
         } catch (error) {
             console.error(error);
-            toast.error("Đã xảy ra lỗi hệ thống khi cập nhật sản phẩm!");
+            alert.error("Đã xảy ra lỗi hệ thống khi cập nhật sản phẩm!");
         }
     }
 

@@ -24,7 +24,7 @@ const initState = {
         banner: "",
         description: "",
         status: "",
-        accountId: ""
+        account: ""
     },
     errors: {
         name: "",
@@ -55,29 +55,29 @@ export function ShopProvider({ children }) {
     const [listItem, setListItem] = useState([]);
     const account = useAccount();
 
-   async function fetchData () {
-            if (account?.id) {
-                try {
-                    const dataShop = await getShopByAccountId(account.id);
-                    if (dataShop && dataShop.id) {
-                        dispatch({ type: "SET_SHOP", payload: dataShop });
-                        
-                        try {
-                            const dataItem = await getItemByShopId(dataShop.id);
-                            setListItem(dataItem);
-                        } catch (error) {
-                            console.error("Error fetching items:", error);
-                            setListItem([]);
-                        }
-                    } else {
-                        dispatch({ type: "SET_SHOP", payload: initState.data });
+    async function fetchData() {
+        if (account?.id) {
+            try {
+                const dataShop = await getShopByAccountId(account.id);
+                if (dataShop && dataShop.id) {
+                    dispatch({ type: "SET_SHOP", payload: dataShop });
+
+                    try {
+                        const dataItem = await getItemByShopId(dataShop.id);
+                        setListItem(dataItem);
+                    } catch (error) {
+                        console.error("Error fetching items:", error);
                         setListItem([]);
                     }
-                } catch (error) {
-                    console.error("Error fetching shop:", error);
+                } else {
+                    dispatch({ type: "SET_SHOP", payload: initState.data });
+                    setListItem([]);
                 }
+            } catch (error) {
+                console.error("Error fetching shop:", error);
             }
-        };
+        }
+    };
 
     useEffect(() => {
         fetchData();
@@ -86,9 +86,9 @@ export function ShopProvider({ children }) {
     return <ShopContext.Provider value={{ state, dispatch, listItem, fetchData }}>{children}</ShopContext.Provider>
 }
 
-export function useShop(){
+export function useShop() {
     const ctx = useContext(ShopContext);
-    if(!ctx){
+    if (!ctx) {
         throw new Error("ShopContext must be used within ShopProvider")
     }
     return ctx;

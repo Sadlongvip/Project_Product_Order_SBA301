@@ -7,7 +7,7 @@ export async function getShop() {
         return res.data;
     } catch (error) {
         console.error(error);
-        return [];
+        throw error;
     }
 }
 
@@ -18,7 +18,7 @@ export async function getShopById(id) {
         return res.data;
     } catch (error) {
         console.error(error);
-        return null;
+        throw error;
     }
 }
 
@@ -29,7 +29,7 @@ export async function createShop(shop) {
         return res.data;
     } catch (error) {
         console.error(error);
-        return null;
+        throw error;
     }
 }
 
@@ -40,7 +40,7 @@ export async function updateShop(id, shop) {
         return res.data;
     } catch (error) {
         console.error(error);
-        return null;
+        throw error;
     }
 }
 
@@ -51,7 +51,7 @@ export async function deleteShop(id) {
         return res.data;
     } catch (error) {
         console.error(error);
-        return null;
+        throw error;
     }
 }
 
@@ -62,7 +62,7 @@ export async function getShopByAccountId(accountId) {
         return res.data;
     } catch (error) {
         console.error(error);
-        return null;
+        throw error;
     }
 }
 

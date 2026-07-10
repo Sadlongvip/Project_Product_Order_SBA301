@@ -1,19 +1,36 @@
-import { Container, Table, Spinner, Badge, Image, Accordion, Button } from "react-bootstrap";
+import { Container, Table, Spinner, Badge, Image, Accordion, Button, Modal, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../context/OrderContext";
+import { useState } from "react";
+import { useToast } from "../context/ToastContext";
 
 export default function Orders() {
     const navigate = useNavigate();
     const { orders, loading, handleCancelOrder } = useOrder();
+    const toast = useToast();
+
+    const [showCancelModal, setShowCancelModal] = useState(false);
+    const [cancelOrderId, setCancelOrderId] = useState(null);
+    const [cancelReason, setCancelReason] = useState("");
 
     const onCancelClick = (orderId) => {
-        const reason = window.prompt("Vui lòng nhập lý do hủy đơn hàng:");
-        if (reason !== null) {
-            if (reason.trim() === "") {
-                alert("Bạn phải nhập lý do để hủy đơn hàng.");
-                return;
-            }
-            handleCancelOrder(orderId, reason);
+        setCancelOrderId(orderId);
+        setShowCancelModal(true);
+    };
+
+    const handleConfirmCancel = async () => {
+        if (!cancelReason || cancelReason.trim() === "") {
+            toast.error("Bạn phải nhập lý do để hủy đơn hàng.");
+            return;
+        }
+        try {
+            await handleCancelOrder(cancelOrderId, cancelReason);
+            toast.success("Đã hủy đơn hàng thành công!");
+            setShowCancelModal(false);
+            setCancelReason("");
+            setCancelOrderId(null);
+        } catch (error) {
+            toast.error("Hủy đơn hàng thất bại!");
         }
     };
 
@@ -137,6 +154,33 @@ export default function Orders() {
                     ))}
                 </Accordion>
             )}
+
+            {/* Modal hủy đơn hàng */}
+            <Modal show={showCancelModal} onHide={() => { setShowCancelModal(false); setCancelReason(""); }} centered>
+                <Modal.Header closeButton>
+                    <Modal.Title>Hủy đơn hàng</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                        <Form.Label>Vui lòng nhập lý do hủy đơn hàng <span className="text-danger">*</span></Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Ví dụ: Thay đổi ý định, Nhập sai địa chỉ..."
+                            value={cancelReason}
+                            onChange={(e) => setCancelReason(e.target.value)}
+                        />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => { setShowCancelModal(false); setCancelReason(""); }}>
+                        Đóng
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmCancel}>
+                        Xác nhận hủy
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 }

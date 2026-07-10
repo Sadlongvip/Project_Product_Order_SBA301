@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { getItem } from "../service/ItemService";
 import { addToCart } from "../service/CartService";
 import { useAccount } from "../hooks/useAccount";
+import { useToast } from "../context/ToastContext";
 
 const ListItem = [
     {
@@ -83,9 +84,8 @@ export default function Store() {
     const [itemData, setItemData] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    const [showAlert, setShowAlert] = useState(false);
-    const [msgAlert, setMsgAlert] = useState("");
     const [search, setSearch] = useState("");
+    const toast = useToast();
 
 
     const handleShow = () => setShowModal(true);
@@ -102,13 +102,9 @@ export default function Store() {
         setLoadingButton(true);
         const responeStatus = await addToCart(selectedItem.id, account?.id);
         if (responeStatus == 200) {
-            setShowAlert(true);
-            setMsgAlert("Đã thêm vào giỏ hàng thành công!");
-            setTimeout(() => setShowAlert(false), 5000);
+            toast.success("Đã thêm vào giỏ hàng thành công!");
         } else {
-            setShowAlert(true);
-            setMsgAlert("Thêm vào giỏ hàng thất bại!");
-            setTimeout(() => setShowAlert(false), 5000);
+            toast.error("Thêm vào giỏ hàng thất bại!");
         }
         setLoadingButton(false);
         handleClose();
@@ -158,16 +154,6 @@ export default function Store() {
                 )}
             </div>
             <>
-                {showAlert && (
-                    <Alert
-                        variant={msgAlert.includes("thất bại") ? "danger" : "success"}
-                        dismissible
-                        onClose={() => setShowAlert(false)}
-                        className="mt-3"
-                    >
-                        {msgAlert}
-                    </Alert>
-                )}
                 {loading ? (
                     <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
                         <Spinner animation="border" variant="primary" role="status">

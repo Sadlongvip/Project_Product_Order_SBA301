@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Table, Badge, Button, Accordion, Image, Spinner } from 'react-bootstrap';
+import { Modal, Table, Badge, Button, Accordion, Image, Spinner, Form } from 'react-bootstrap';
 import { getOrdersByShop } from '../service/OrderService';
 import { useOrder } from '../context/OrderContext';
+import { useToast } from '../context/ToastContext';
 
 export default function ShopOrdersModal({ show, onHide, shopId }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const { handleAcceptOrder, handleCancelOrder } = useOrder();
+    const toast = useToast();
+
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectOrderId, setRejectOrderId] = useState(null);
+    const [rejectReason, setRejectReason] = useState("");
 
     const loadOrders = async () => {
         if (!shopId) return;
@@ -28,22 +34,37 @@ export default function ShopOrdersModal({ show, onHide, shopId }) {
         }
     }, [show, shopId]);
 
-    const onAcceptClick = (orderId) => {
-        handleAcceptOrder(orderId, () => {
-            loadOrders(); // refresh shop orders
-        });
+    const onAcceptClick = async (orderId) => {
+        try {
+            await handleAcceptOrder(orderId, () => {
+                toast.success("Duyệt đơn hàng thành công!");
+                loadOrders(); // refresh shop orders
+            });
+        } catch (error) {
+            toast.error("Duyệt đơn hàng thất bại!");
+        }
     };
 
     const onCancelClick = (orderId) => {
-        const reason = window.prompt("Nhập lý do từ chối đơn hàng này:");
-        if (reason !== null) {
-            if (reason.trim() === "") {
-                alert("Bạn phải nhập lý do để từ chối.");
-                return;
-            }
-            handleCancelOrder(orderId, reason, () => {
+        setRejectOrderId(orderId);
+        setShowRejectModal(true);
+    };
+
+    const handleConfirmReject = async () => {
+        if (!rejectReason || rejectReason.trim() === "") {
+            toast.error("Bạn phải nhập lý do để từ chối.");
+            return;
+        }
+        try {
+            await handleCancelOrder(rejectOrderId, rejectReason, () => {
+                toast.success("Đã từ chối đơn hàng!");
                 loadOrders(); // refresh shop orders
             });
+            setShowRejectModal(false);
+            setRejectReason("");
+            setRejectOrderId(null);
+        } catch (error) {
+            toast.error("Từ chối đơn hàng thất bại!");
         }
     };
 
@@ -136,6 +157,33 @@ export default function ShopOrdersModal({ show, onHide, shopId }) {
                     </Accordion>
                 )}
             </Modal.Body>
+            
+            {/* Modal nhập lý do từ chối */}
+            <Modal show={showRejectModal} onHide={() => { setShowRejectModal(false); setRejectReason(""); }} centered style={{ zIndex: 1060 }}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Từ chối đơn hàng</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group>
+                        <Form.Label>Vui lòng nhập lý do từ chối đơn hàng <span className="text-danger">*</span></Form.Label>
+                        <Form.Control
+                            as="textarea"
+                            rows={3}
+                            placeholder="Ví dụ: Hết hàng, Sai thông tin sản phẩm..."
+                            value={rejectReason}
+                            onChange={(e) => setRejectReason(e.target.value)}
+                        />
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => { setShowRejectModal(false); setRejectReason(""); }}>
+                        Đóng
+                    </Button>
+                    <Button variant="danger" onClick={handleConfirmReject}>
+                        Xác nhận từ chối
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Modal>
     );
 }

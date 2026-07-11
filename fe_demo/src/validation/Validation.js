@@ -295,7 +295,6 @@ export function ValidateShopInput(formData) {
   errors.phone       = ValidateShopPhone(formData.phone);
   errors.email       = ValidateShopEmail(formData.email);
   errors.description = ValidateShopDescription(formData.description);
-  errors.status      = ValidateShopStatus(formData.status);
   return errors;
 }
 

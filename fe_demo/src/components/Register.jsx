@@ -1,88 +1,82 @@
 import React, { useState } from "react";
 import { Button, Container, Form, Row, Alert, Col } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { validateUserInput } from "../validation/Validation";
-const api = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE || 'http://localhost:8080/api'
-});
 
 export default function Register() {
-    const { state, dispatch } = useAuth();
+    const { signup } = useAuth();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [registerError, setRegisterError] = useState("");
+    const [fieldErrors, setFieldErrors] = useState({});
+
+    const [values, setValues] = useState({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        phoneNumber: '',
+        address: ''
+    });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        dispatch({
-            type: 'OnChange',
-            payload: { field: name, value }
-        });
-    };
-
-    const handleBlur = (e) => {
-        const { name } = e.target;
-        dispatch({
-            type: 'TOUCH_FIELD',
-            payload: { field: name }
-        });
+        setValues(prev => ({
+            ...prev,
+            [name]: value
+        }));
     };
 
     const handleRegister = async (e) => {
         e.preventDefault();
         setRegisterError("");
+        setFieldErrors({});
+
+        // Just basic frontend check for confirmPassword before calling API
+        if (values.password !== values.confirmPassword) {
+            setRegisterError("Mật khẩu xác nhận không khớp.");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // Validate form before sending
-            dispatch({ type: 'VALIDATE_FORM' });
-
-            const validationResult = validateUserInput(state.values);
-            if (!validationResult.isValid) {
-                setLoading(false);
-                return;
-            }
-
-            const response = await api.post("/auth/register", {
-                username: state.values.username,
-                email: state.values.email,
-                password: state.values.password,
-                phoneNumber: state.values.phoneNumber,
-                address: state.values.address
-            });
-
-            console.log("Register success:", response.data);
-
-            // Auto-login after successful registration
-            const loginResponse = await api.post("/auth/login", {
-                email: state.values.email,
-                password: state.values.password
-            });
+            await signup(
+                values.username,
+                values.email,
+                values.password,
+                values.phoneNumber,
+                values.address
+            );
             
-            const loginData = loginResponse.data;
-            console.log("Auto-login success:", loginData);
-
+            console.log("Register and auto-login success");
             setShowSuccess(true);
-
-            // Update auth state in context
-            dispatch({ type: 'SET_AUTHENTICATED', payload: true });
-
-            // Store a dummy token and the account data for redirection to /home
-            localStorage.setItem('authToken', 'authenticated');
-            localStorage.setItem('account', JSON.stringify(loginData));
-
-            // Redirect to home after successful registration and login
-            setTimeout(() => {
-                window.location.href = "/";
-            }, 1500);
-
         } catch (error) {
             console.error("Register error:", error);
-            const errorMessage = error.response?.data?.message || (typeof error.response?.data === 'string' ? error.response.data : "Registration failed. Please try again.");
-            setRegisterError(errorMessage);
+            let errorMessage = "";
+            let parsedFieldErrors = {};
+
+            if (error.response?.data?.message) {
+                const msg = error.response.data.message;
+                if (msg.includes(":")) {
+                    msg.split(", ").forEach(part => {
+                        const [field, ...rest] = part.split(": ");
+                        if (rest.length > 0) {
+                            parsedFieldErrors[field] = rest.join(": ");
+                        }
+                    });
+                } else {
+                    errorMessage = msg;
+                }
+            } else if (typeof error.response?.data === 'string') {
+                errorMessage = error.response.data;
+            } else {
+                errorMessage = "Registration failed. Please try again.";
+            }
+
+            setFieldErrors(parsedFieldErrors);
+            if(errorMessage) setRegisterError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -110,14 +104,13 @@ export default function Register() {
                             <Form.Control
                                 type="text"
                                 placeholder="Enter your username"
-                                value={state.values.username}
+                                value={values.username}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="username"
-                                isInvalid={state.touched.username && !!state.errors.username}
+                                isInvalid={!!fieldErrors.username}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.username}
+                                {fieldErrors.username}
                             </Form.Control.Feedback>
                         </Form.Group>
 
@@ -126,14 +119,13 @@ export default function Register() {
                             <Form.Control
                                 type="email"
                                 placeholder="Enter email"
-                                value={state.values.email}
+                                value={values.email}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="email"
-                                isInvalid={state.touched.email && !!state.errors.email}
+                                isInvalid={!!fieldErrors.email}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.email}
+                                {fieldErrors.email}
                             </Form.Control.Feedback>
                         </Form.Group>
 
@@ -142,14 +134,13 @@ export default function Register() {
                             <Form.Control
                                 type="password"
                                 placeholder="Enter password"
-                                value={state.values.password}
+                                value={values.password}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="password"
-                                isInvalid={state.touched.password && !!state.errors.password}
+                                isInvalid={!!fieldErrors.password}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.password}
+                                {fieldErrors.password}
                             </Form.Control.Feedback>
                         </Form.Group>
 
@@ -158,14 +149,13 @@ export default function Register() {
                             <Form.Control
                                 type="password"
                                 placeholder="Confirm password"
-                                value={state.values.confirmPassword}
+                                value={values.confirmPassword}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="confirmPassword"
-                                isInvalid={state.touched.confirmPassword && !!state.errors.confirmPassword}
+                                isInvalid={!!fieldErrors.confirmPassword}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.confirmPassword}
+                                {fieldErrors.confirmPassword}
                             </Form.Control.Feedback>
                         </Form.Group>
 
@@ -174,14 +164,13 @@ export default function Register() {
                             <Form.Control
                                 type="tel"
                                 placeholder="Enter phone number"
-                                value={state.values.phoneNumber}
+                                value={values.phoneNumber}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="phoneNumber"
-                                isInvalid={state.touched.phoneNumber && !!state.errors.phoneNumber}
+                                isInvalid={!!fieldErrors.phoneNumber}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.phoneNumber}
+                                {fieldErrors.phoneNumber}
                             </Form.Control.Feedback>
                         </Form.Group>
 
@@ -190,14 +179,13 @@ export default function Register() {
                             <Form.Control
                                 type="text"
                                 placeholder="Enter address"
-                                value={state.values.address}
+                                value={values.address}
                                 onChange={handleChange}
-                                onBlur={handleBlur}
                                 name="address"
-                                isInvalid={state.touched.address && !!state.errors.address}
+                                isInvalid={!!fieldErrors.address}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {state.errors.address}
+                                {fieldErrors.address}
                             </Form.Control.Feedback>
                         </Form.Group>
 

@@ -4,17 +4,10 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export default function NavBar() {
-    const { isAuthenticated, dispatch } = useAuth();
+    const { token, logout } = useAuth();
     const navigate = useNavigate();
 
-    const isLoggedIn = isAuthenticated || !!localStorage.getItem('authToken');
-
-    const handleLogout = () => {
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('account');
-        dispatch({ type: 'SET_AUTHENTICATED', payload: false });
-        navigate('/login');
-    };
+    const isLoggedIn = !!token;
 
     return (
         <Navbar bg="dark" variant="dark" expand="lg" sticky="top">
@@ -39,7 +32,7 @@ export default function NavBar() {
                             <Button
                                 variant="outline-danger"
                                 size="sm"
-                                onClick={handleLogout}
+                                onClick={logout}
                             >
                                 Logout
                             </Button>

@@ -6,15 +6,31 @@ const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
-// Response interceptor — xử lý lỗi chung
+
+// Request interceptor — tự động gắn JWT token vào header
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// RESPONSE: token hết hạn → xóa → redirect login
 api.interceptors.response.use(
     (res) => res,
     (error) => {
-        console.error("API Error:", error.response?.status, error.message)
+        if (error.response?.status === 401) {
+            localStorage.removeItem('token')
+            window.location.href = '/login'
+        }
         return Promise.reject(error)
     }
 )
-
-
 
 export default api;

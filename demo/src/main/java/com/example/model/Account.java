@@ -56,11 +56,11 @@ public class Account implements UserDetails {
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
-    @JsonIgnoreProperties({ "account", "orderItems" })
+    @JsonIgnoreProperties({ "account", "orderItems", "shop", "cancelReason" })
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 
-    @JsonIgnoreProperties("account")
+    @JsonIgnoreProperties({ "account", "items" })
     @OneToOne(mappedBy = "account")
     private Shop shop;
 

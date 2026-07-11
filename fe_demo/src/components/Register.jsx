@@ -59,20 +59,37 @@ export default function Register() {
 
             if (error.response?.data?.message) {
                 const msg = error.response.data.message;
+                const allowedFields = ["username", "email", "password", "confirmPassword", "phoneNumber", "address"];
+                let isFieldError = false;
+
                 if (msg.includes(":")) {
                     msg.split(", ").forEach(part => {
                         const [field, ...rest] = part.split(": ");
-                        if (rest.length > 0) {
+                        if (allowedFields.includes(field) && rest.length > 0) {
                             parsedFieldErrors[field] = rest.join(": ");
+                            isFieldError = true;
                         }
                     });
-                } else {
+                }
+                
+                // Đặc biệt xử lý lỗi trùng email từ Backend (RuntimeException)
+                if (msg.toLowerCase().includes("email đã được sử dụng") || msg.toLowerCase().includes("email đã tồn tại")) {
+                    parsedFieldErrors.email = msg;
+                    isFieldError = true;
+                }
+
+                if (!isFieldError) {
                     errorMessage = msg;
                 }
             } else if (typeof error.response?.data === 'string') {
                 errorMessage = error.response.data;
             } else {
                 errorMessage = "Registration failed. Please try again.";
+            }
+
+            if (errorMessage) {
+                // For generic error, we can either set it to a general error state or just show it in the alert.
+                // In Register, we kept the registerError state for general errors.
             }
 
             setFieldErrors(parsedFieldErrors);

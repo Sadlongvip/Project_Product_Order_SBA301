@@ -31,7 +31,8 @@ export default function Shop(){
         // Validate toàn bộ form
         dispatch({ type: "SUBMIT" });
 
-        const validationErrors = ValidateShopInput(state.data);
+        const formDataToValidate = { ...state.data, email: user?.sub || state.data.email };
+        const validationErrors = ValidateShopInput(formDataToValidate);
         const hasError = Object.values(validationErrors).some((err) => err !== "");
         
         if(hasError){

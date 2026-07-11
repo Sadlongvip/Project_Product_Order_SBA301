@@ -1,9 +1,11 @@
 package com.example.model;
 
+import java.util.Collection;
 import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,18 +13,22 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "Account")
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Account {
+@Builder
+public class Account implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,16 +48,42 @@ public class Account {
     @Column(nullable = true, columnDefinition = "nvarchar(255)")
     private String address;
 
+    @Enumerated(jakarta.persistence.EnumType.STRING)
+    private Role role;
+
     // ==================== Association ====================
-    @JsonIgnoreProperties({"account", "cartItems"})
+    @JsonIgnoreProperties({ "account", "cartItems" })
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
-    @JsonIgnoreProperties({"account", "orderItems"})
+    @JsonIgnoreProperties({ "account", "orderItems" })
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 
     @JsonIgnoreProperties("account")
     @OneToOne(mappedBy = "account")
     private Shop shop;
-}
+
+    // ==================== UserDetails ====================
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+    }
+
+    @Override
+    public String getUsername() {
+        return email; // Dùng Email làm identifier chính
+    }
+
+    @Override
+    public boolean isAccountNonExpired() { return true; }
+
+    @Override
+    public boolean isAccountNonLocked() { return true; }
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; }
+
+    @Override
+    public boolean isEnabled() { return true; }
+}

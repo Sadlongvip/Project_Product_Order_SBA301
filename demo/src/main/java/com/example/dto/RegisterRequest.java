@@ -1,9 +1,9 @@
 package com.example.dto;
 
 public record RegisterRequest(
-        String username,
-        String email,
-        String password,
-        String phoneNumber
-) {
+                String username,
+                String email,
+                String password,
+                String phoneNumber,
+                String address) {
 }

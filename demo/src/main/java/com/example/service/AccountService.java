@@ -43,6 +43,11 @@ public class AccountService {
         return account;
     }
 
+    public Account getAccountByEmail(String email) {
+        return accountRepository.findByEmail(email)
+                .orElseThrow(() -> new NoSuchElementException("Account not found with email: " + email));
+    }
+
     public Account getAccountById(Long id) {
         return accountRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Account not found with id: " + id));

@@ -16,7 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -52,15 +52,15 @@ public class Account implements UserDetails {
     private Role role;
 
     // ==================== Association ====================
-    @JsonIgnoreProperties({ "account", "cartItems" })
+    @JsonIgnore
     @OneToOne(mappedBy = "account")
     private Cart cart;
 
-    @JsonIgnoreProperties({ "account", "orderItems", "shop", "cancelReason" })
+    @JsonIgnore
     @OneToMany(mappedBy = "account")
     private List<Order> orders;
 
-    @JsonIgnoreProperties({ "account", "items" })
+    @JsonIgnore
     @OneToOne(mappedBy = "account")
     private Shop shop;
 

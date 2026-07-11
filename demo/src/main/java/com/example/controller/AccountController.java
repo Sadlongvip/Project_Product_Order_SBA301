@@ -12,6 +12,11 @@ import com.example.repository.IAccountRepository;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import com.example.service.AccountService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,10 +25,21 @@ import lombok.RequiredArgsConstructor;
 public class AccountController {
 
     private final IAccountRepository accountRepository;
+    private final AccountService accountService;
 
     @GetMapping("/me")
     public ResponseEntity<Account> me(Authentication auth) {
         return ResponseEntity.ok((Account) auth.getPrincipal());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
+        return ResponseEntity.ok(accountService.getAccountById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account account) {
+        return ResponseEntity.ok(accountService.updateAccount(id, account));
     }
 
     @GetMapping

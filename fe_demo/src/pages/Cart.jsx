@@ -49,16 +49,23 @@ export default function Cart() {
 
     // Xóa 1 sản phẩm khỏi giỏ
     async function handleRemove(itemId) {
-        const status = await removeFromCart(account.id, itemId);
-        if (status === 200) {
-            showAlert("Đã xóa sản phẩm khỏi giỏ hàng!");
-            loadCart();
-        } else {
-            showAlert("Xóa thất bại!", "danger");
+        if (!account) return;
+        setLoading(true);
+        try {
+            const status = await removeFromCart(account.id, itemId);
+            if (status === 204 || status === 200) {
+                // Cập nhật lại state sau khi xóa
+                setCartItems(prev => prev.filter(ci => ci.item?.id !== itemId));
+                showAlert("Đã xóa sản phẩm khỏi giỏ hàng", "success");
+            } else {
+                showAlert("Không thể xóa sản phẩm (Lỗi từ hệ thống)", "danger");
+            }
+        } catch (error) {
+            console.error(error);
+            showAlert("Không thể xóa sản phẩm", "danger");
         }
-    }
-
-    // Cập nhật số lượng
+        setLoading(false);
+    }// Cập nhật số lượng
     async function handleQuantityChange(itemId, newQty) {
         if (newQty < 1) return;
         await updateCart(account.id, itemId, newQty);

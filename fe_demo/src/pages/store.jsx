@@ -99,6 +99,11 @@ export default function Store() {
         item.name.toLowerCase().includes(search.toLowerCase())
     );
     async function handleAddToCart() {
+        if (!selectedItem.shop || !selectedItem.shop.id) {
+            alert.error("Sản phẩm này không thuộc cửa hàng nào, không thể thêm vào giỏ hàng!");
+            handleClose();
+            return;
+        }
         setLoadingButton(true);
         const responeStatus = await addToCart(selectedItem.id, account?.id);
         if (responeStatus == 200) {

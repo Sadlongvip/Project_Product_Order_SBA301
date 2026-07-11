@@ -2,7 +2,7 @@ import api from "../api/axiosInstance";
 
 export async function getUser(id) {
     try{
-        const response = await api.get(`/auth/users/${id}`);
+        const response = await api.get(`/accounts/${id}`);
         return response.data;
     }
     catch(error){
@@ -12,7 +12,7 @@ export async function getUser(id) {
 }
 export async function updateUser(userData) {
     try {
-        const response = await api.put(`/auth/users`, userData);
+        const response = await api.put(`/accounts/${userData.id}`, userData);
         return response.data;
     }
     catch (error) {

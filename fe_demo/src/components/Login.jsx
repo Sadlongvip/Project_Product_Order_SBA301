@@ -2,30 +2,16 @@ import React, { useState } from "react";
 import { Card, Container, Form, Button, Row, Col, FloatingLabel, Alert } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import api from "../api/axiosInstance";
 
 export default function Login() {
-    const { state, dispatch } = useAuth();
+    const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loginError, setLoginError] = useState("");
     const [loading, setLoading] = useState(false);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        dispatch({
-            type: 'OnChange',
-            payload: { field: name, value }
-        });
-    };
-
-    const handleBlur = (e) => {
-        const { name } = e.target;
-        dispatch({
-            type: 'TOUCH_FIELD',
-            payload: { field: name }
-        });
-    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -33,37 +19,21 @@ export default function Login() {
         setLoading(true);
 
         try {
-            
-            const response = await api.post("/auth/login", {
-                email: state.values.email,
-                password: state.values.password
-            });
-
-            const loginData = response.data; // { id, email }
-            console.log("Login success:", loginData);
-
-            dispatch({ type: 'SET_AUTHENTICATED', payload: true });
-
-            // Lưu toàn bộ LoginRespone vào localStorage
-            localStorage.setItem('authToken', 'authenticated');
-            localStorage.setItem('account', JSON.stringify(loginData));
-
-            window.location.href = "/";
-            } catch (error) {
+            await login(email, password);
+            // login function in AuthContext already sets token and navigates
+        } catch (error) {
             console.error("Login error:", error);
 
-            let errorMessage;
-            if (!error.response) {
-                errorMessage = "Network error. Please check your connection.";
-            } else if (error.response.status === 404) {
-                // 404 - endpoint not found
-                errorMessage = "Network error. Server endpoint not found.";
+            let errorMessage = "";
+            
+            if (error.response) {
+                errorMessage = "Email hoặc mật khẩu không đúng";
             } else {
-                // Other errors
-                errorMessage = "Username hoặc password của bạn không đúng";
+                errorMessage = "Network error. Please check your connection.";
             }
-            setLoginError(errorMessage); // Nơi trả về lỗi cho dòng 80
-            } finally {
+            
+            setLoginError(errorMessage);
+        } finally {
             setLoading(false);
         }
     };
@@ -83,9 +53,8 @@ export default function Login() {
                                             type="text"
                                             name="email"
                                             className="input-style"
-                                            value={state.values.email}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             placeholder="Enter your email"
                                         />
                                     </FloatingLabel>
@@ -97,9 +66,8 @@ export default function Login() {
                                             type="password"
                                             name="password"
                                             className="input-style"
-                                            value={state.values.password}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             placeholder="Enter your password"
                                         />
                                     </FloatingLabel>

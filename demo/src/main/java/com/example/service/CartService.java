@@ -62,6 +62,10 @@ public class CartService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NoSuchElementException("Item not found with id: " + itemId));
 
+        if (item.getShop() == null) {
+            throw new IllegalStateException("Sản phẩm này không thuộc cửa hàng nào, không thể thêm vào giỏ hàng!");
+        }
+
         // Lấy Cart của Account
         Cart cart = getCartByAccount(account);
 

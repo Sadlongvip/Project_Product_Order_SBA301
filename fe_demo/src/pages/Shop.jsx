@@ -31,7 +31,8 @@ export default function Shop(){
         // Validate toàn bộ form
         dispatch({ type: "SUBMIT" });
 
-        const validationErrors = ValidateShopInput(state.data);
+        const formDataToValidate = { ...state.data, email: user?.sub || state.data.email };
+        const validationErrors = ValidateShopInput(formDataToValidate);
         const hasError = Object.values(validationErrors).some((err) => err !== "");
         
         if(hasError){
@@ -42,9 +43,17 @@ export default function Shop(){
         // Gọi API
         try {
             const shopDataToSubmit = {
-                ...state.data,
+                name: state.data.name,
+                address: state.data.address,
+                phone: state.data.phone,
+                email: user?.sub || state.data.email, // sub = email từ JWT token
+                logo: state.data.logo,
+                banner: state.data.banner,
+                description: state.data.description,
+                status: "Active",
                 account: { id: user?.id }
             };
+            console.log("Submitting shop with accountId:", user?.id, "email:", user?.sub);
             await createShop(shopDataToSubmit);
             dispatch({ type: "SUBMIT_SUCCESS" });
             setShowCreate(false);

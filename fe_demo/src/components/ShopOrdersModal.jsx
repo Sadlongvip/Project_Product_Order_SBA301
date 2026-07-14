@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Table, Badge, Button, Accordion, Image, Spinner, Form } from 'react-bootstrap';
 import { getOrdersByShop } from '../service/OrderService';
 import { useOrder } from '../context/OrderContext';
-import { useToast } from '../context/ToastContext';
+import { useAlert } from '../context/AlertContext';
 
 export default function ShopOrdersModal({ show, onHide, shopId }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const { handleAcceptOrder, handleCancelOrder } = useOrder();
-    const toast = useToast();
+    const alert = useAlert();
 
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectOrderId, setRejectOrderId] = useState(null);
@@ -37,11 +37,11 @@ export default function ShopOrdersModal({ show, onHide, shopId }) {
     const onAcceptClick = async (orderId) => {
         try {
             await handleAcceptOrder(orderId, () => {
-                toast.success("Duyệt đơn hàng thành công!");
+                alert.success("Duyệt đơn hàng thành công!");
                 loadOrders(); // refresh shop orders
             });
         } catch (error) {
-            toast.error("Duyệt đơn hàng thất bại!");
+            alert.error("Duyệt đơn hàng thất bại!");
         }
     };
 
@@ -52,19 +52,19 @@ export default function ShopOrdersModal({ show, onHide, shopId }) {
 
     const handleConfirmReject = async () => {
         if (!rejectReason || rejectReason.trim() === "") {
-            toast.error("Bạn phải nhập lý do để từ chối.");
+            alert.error("Bạn phải nhập lý do để từ chối.");
             return;
         }
         try {
             await handleCancelOrder(rejectOrderId, rejectReason, () => {
-                toast.success("Đã từ chối đơn hàng!");
+                alert.success("Đã từ chối đơn hàng!");
                 loadOrders(); // refresh shop orders
             });
             setShowRejectModal(false);
             setRejectReason("");
             setRejectOrderId(null);
         } catch (error) {
-            toast.error("Từ chối đơn hàng thất bại!");
+            alert.error("Từ chối đơn hàng thất bại!");
         }
     };
 

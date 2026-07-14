@@ -1,74 +1,50 @@
 package com.example.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.dto.LoginRequest;
-
 import com.example.model.Account;
+import com.example.repository.IAccountRepository;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.example.service.AccountService;
 
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/accounts")
+@RequiredArgsConstructor
 public class AccountController {
+
+    private final IAccountRepository accountRepository;
     private final AccountService accountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
+    @GetMapping("/me")
+    public ResponseEntity<Account> me(Authentication auth) {
+        return ResponseEntity.ok((Account) auth.getPrincipal());
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<?> registerAccount(@Valid @RequestBody Account account) {
-        try {
-            accountService.createAccount(account);
-            return ResponseEntity.ok("Tạo tài khoản thành công!");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<Account> getAccountById(@PathVariable Long id) {
+        return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
-        try {
-            Account response = accountService.checkLogin(request.email(), request.password());
-            if (response != null) {
-                return ResponseEntity.ok(response);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Sai email hoặc mật khẩu");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Đã xảy ra lỗi hệ thống. Vui lòng thử lại sau!");
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account account) {
+        return ResponseEntity.ok(accountService.updateAccount(id, account));
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<?> getAccount(@PathVariable Long id) {
-        try {
-            Account account = accountService.getAccountById(id);
-            return ResponseEntity.ok(account);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/users")
-    public ResponseEntity<?> updateAccount(@RequestBody Account account) {
-        try {
-            Account updatedAccount = accountService.updateAccount(account.getId(), account);
-            return ResponseEntity.ok(updatedAccount);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Account>> all() {
+        return ResponseEntity.ok(accountRepository.findAll());
     }
 }

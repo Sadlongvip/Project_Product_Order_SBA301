@@ -80,13 +80,13 @@ export default function Home() {
     return (
         <div>
             <h1 className="mt-3 text-center" style={{ color: "#1a1a2e" }}>
-                Welcome To Our Store
+                Chào mừng đến với cửa hàng của chúng tôi
             </h1>
             <Container className="mt-5 ">
                 <div className="mt-5 d-flex justify-content-between align-items-center banner-home">
                     <div className="banner-text">
-                        <h2>Discover Our Collection</h2>
-                        <p>Find the best products at the best prices</p>
+                        <h2>Khám phá sản phẩm của chúng tôi</h2>
+                        <p>Tìm những sản phẩm tốt nhất với giá tốt nhất</p>
                         <div className="mt-4">
                             <Link to="/store" className="hv2-btn-primary" style={{ display: 'inline-block', padding: '12px 28px', background: 'linear-gradient(135deg, #e94560, #c23152)', color: '#fff', borderRadius: '50px', textDecoration: 'none', fontWeight: '600', boxShadow: '0 4px 15px rgba(233, 69, 96, 0.4)' }}>
                                 🛍️ Đi đến cửa hàng

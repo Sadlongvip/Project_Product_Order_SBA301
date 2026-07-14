@@ -125,3 +125,12 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 1000px #fff inset !important;
   -webkit-text-fill-color: #212529 !important;
 }
+
+/* Remove blue focus border on close buttons */
+.btn-close:focus,
+.btn-close:active,
+.btn-close:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}

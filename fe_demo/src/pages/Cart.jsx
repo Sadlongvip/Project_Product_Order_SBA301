@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from "../hooks/useAccount";
 import { getCartById, updateCart, removeFromCart, clearCart } from "../service/CartService";
 import { useOrder } from "../context/OrderContext";
-import { useToast } from "../context/ToastContext";
+import { useAlert } from "../context/AlertContext";
 
 export default function Cart() {
     const account = useAccount();
@@ -14,14 +14,14 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
     const { handleCheckout } = useOrder();
-    const toast = useToast();
+    const alert = useAlert();
 
-    // Hiển thị toast
+    // Hiển thị alert
     function showAlert(msg, variant = "success") {
         if (variant === "danger") {
-            toast.error(msg);
+            alert.error(msg);
         } else {
-            toast.success(msg);
+            alert.success(msg);
         }
     }
 
@@ -49,16 +49,23 @@ export default function Cart() {
 
     // Xóa 1 sản phẩm khỏi giỏ
     async function handleRemove(itemId) {
-        const status = await removeFromCart(account.id, itemId);
-        if (status === 200) {
-            showAlert("Đã xóa sản phẩm khỏi giỏ hàng!");
-            loadCart();
-        } else {
-            showAlert("Xóa thất bại!", "danger");
+        if (!account) return;
+        setLoading(true);
+        try {
+            const status = await removeFromCart(account.id, itemId);
+            if (status === 204 || status === 200) {
+                // Cập nhật lại state sau khi xóa
+                setCartItems(prev => prev.filter(ci => ci.item?.id !== itemId));
+                showAlert("Đã xóa sản phẩm khỏi giỏ hàng", "success");
+            } else {
+                showAlert("Không thể xóa sản phẩm (Lỗi từ hệ thống)", "danger");
+            }
+        } catch (error) {
+            console.error(error);
+            showAlert("Không thể xóa sản phẩm", "danger");
         }
-    }
-
-    // Cập nhật số lượng
+        setLoading(false);
+    }// Cập nhật số lượng
     async function handleQuantityChange(itemId, newQty) {
         if (newQty < 1) return;
         await updateCart(account.id, itemId, newQty);

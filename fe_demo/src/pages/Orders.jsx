@@ -2,12 +2,12 @@ import { Container, Table, Spinner, Badge, Image, Accordion, Button, Modal, Form
 import { useNavigate } from "react-router-dom";
 import { useOrder } from "../context/OrderContext";
 import { useState } from "react";
-import { useToast } from "../context/ToastContext";
+import { useAlert } from "../context/AlertContext";
 
 export default function Orders() {
     const navigate = useNavigate();
     const { orders, loading, handleCancelOrder } = useOrder();
-    const toast = useToast();
+    const alert = useAlert();
 
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [cancelOrderId, setCancelOrderId] = useState(null);
@@ -20,17 +20,17 @@ export default function Orders() {
 
     const handleConfirmCancel = async () => {
         if (!cancelReason || cancelReason.trim() === "") {
-            toast.error("Bạn phải nhập lý do để hủy đơn hàng.");
+            alert.error("Bạn phải nhập lý do để hủy đơn hàng.");
             return;
         }
         try {
             await handleCancelOrder(cancelOrderId, cancelReason);
-            toast.success("Đã hủy đơn hàng thành công!");
+            alert.success("Đã hủy đơn hàng thành công!");
             setShowCancelModal(false);
             setCancelReason("");
             setCancelOrderId(null);
         } catch (error) {
-            toast.error("Hủy đơn hàng thất bại!");
+            alert.error("Hủy đơn hàng thất bại!");
         }
     };
 

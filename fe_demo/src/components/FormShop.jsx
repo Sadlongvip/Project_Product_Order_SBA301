@@ -1,11 +1,13 @@
 import { Form, Row, Col, Button, Image } from "react-bootstrap";
 import { useShop } from "../context/ShopContext";
+import { useAccount } from "../hooks/useAccount";
 import { ValidateShopInput } from "../validation/Validation";
 import { createShop } from "../service/ShopService";
 
 export default function FormShop({ onCancel, onSuccess }) {
     const { state, dispatch } = useShop();
     const { data, errors, touched } = state;
+    const user = useAccount();
 
     function handleChange(e) {
         const { name, value } = e.target;
@@ -83,10 +85,8 @@ export default function FormShop({ onCancel, onSuccess }) {
                     <Form.Control
                         type="email"
                         name="email"
-                        value={data.email}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        placeholder="Nhập email"
+                        value={user?.sub || data.email}
+                        disabled={true}
                         isInvalid={touched.email && !!errors.email}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -113,25 +113,7 @@ export default function FormShop({ onCancel, onSuccess }) {
                 </Form.Control.Feedback>
             </Form.Group>
 
-            {/* Trạng thái */}
-            <Form.Group className="mb-3" controlId="shopStatus">
-                <Form.Label>Trạng thái <span className="text-danger">*</span></Form.Label>
-                <Form.Select
-                    name="status"
-                    value={data.status}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    isInvalid={touched.status && !!errors.status}
-                >
-                    <option value="">-- Chọn trạng thái --</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="pending">Pending</option>
-                </Form.Select>
-                <Form.Control.Feedback type="invalid">
-                    {errors.status}
-                </Form.Control.Feedback>
-            </Form.Group>
+
 
             {/* Logo URL (không validate, chỉ preview) */}
             <Form.Group className="mb-3" controlId="shopLogo">

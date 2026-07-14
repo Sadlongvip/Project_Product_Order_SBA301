@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Login from '../components/Login';
 import Home from '../pages/home';
-import HomeV2 from '../pages/HomeV2';
+
 import Register from '../components/Register';
 import Store from '../pages/store';
 import Cart from '../pages/Cart';
@@ -20,7 +20,6 @@ export default function AppRouter() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<Home />} />
-            <Route path="/home-v2" element={<HomeV2 />} />
             <Route path="/store" element={<ProtectedRoute element={<Store />} />} />
             <Route path="/cart" element={<ProtectedRoute element={<OrderProvider><Cart /></OrderProvider>} />} />
             <Route path="/orders" element={<ProtectedRoute element={<OrderProvider><Orders /></OrderProvider>} />} />
